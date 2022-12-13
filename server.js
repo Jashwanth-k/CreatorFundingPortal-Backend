@@ -1,22 +1,15 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const app = express();
 const db = require("./models/index");
-app.use(bodyParser.json());
+const fs = require("fs");
+const app = require("./app");
+// to send images from file system
+// app.use("/images", express.static("images"));
 
 db.sequelize.sync({ force: true, alter: true });
-// db.script
-//   .create({
-//     imageSource: "abc123.com",
-//     price: 100,
-//     currencyType: "ethereum",
-//   })
-//   .then((data) => console.log(data));
 
 app.get("/", (req, res) => {
   res.setHeader("content-type", "application/json");
   res.writeHead(200);
-  res.end(JSON.stringify({ message: "successful" }));
+  res.end(JSON.stringify(compressed));
 });
 
 app.listen(8081, () => {
