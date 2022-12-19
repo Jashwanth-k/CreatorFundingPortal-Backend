@@ -4,8 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "debug": "node --nolazy --inspect-brk=5858 server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "seed:reset": "npx sequelize-cli db:seed:undo:all && npx sequelize-cli db:seed:all",
+    "start": "npm run seed:reset && node server.js"
   },
   "author": "",
   "license": "ISC",

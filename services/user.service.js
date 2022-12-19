@@ -6,11 +6,7 @@ class UserService {
   }
 
   getUserById(id) {
-    return this.schema.findByPk({
-      where: {
-        id: id,
-      },
-    });
+    return this.schema.findByPk(id);
   }
 
   getUserByEmail(email) {
