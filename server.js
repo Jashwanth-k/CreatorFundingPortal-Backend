@@ -3,6 +3,7 @@ const fs = require("fs");
 const { app } = require("./app");
 const scriptRouter = require("./routes/script.route");
 const musicRouter = require("./routes/music.route");
+const authRouter = require("./routes/auth.route");
 // to send images from file system
 // app.use("/images", express.static("images"));
 
@@ -14,6 +15,7 @@ function init() {
       name: "robert",
       email: "robert123@gmail.com",
       password: "something",
+      roleId: 2,
       createdAt: "2008-7-04",
       updatedAt: "2008-7-04",
     },
@@ -35,13 +37,16 @@ function init() {
     },
   ];
 
+  const rolesData = [{ name: "user" }, { name: "creator" }];
+  db.role.bulkCreate(rolesData);
   db.user.bulkCreate(userData);
   db.script.bulkCreate(scriptData);
 }
 
 app.use("/script", scriptRouter);
 app.use("/music", musicRouter);
+app.use("/auth", authRouter);
 
-app.listen(8081, () => {
+app.listen(process.env.PORT || 8080, () => {
   console.log("app running");
 });

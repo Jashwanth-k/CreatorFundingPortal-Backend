@@ -9,14 +9,14 @@ class ScriptService {
     try {
       const fetchData = await this.schema.findAll({ include: db.user });
       if (fetchData.length === 0) {
-        return { message: "no scripts found" };
+        return [404, { message: "no scripts found" }];
       }
       const newData = fetchData.map((el) => {
         delete el.dataValues.user.dataValues.password;
         return el.dataValues;
       });
       newData.push({ message: "scripts fetched successfully" });
-      return newData;
+      return [200, newData];
     } catch (err) {
       throw { message: err };
     }
@@ -31,11 +31,11 @@ class ScriptService {
 
       fetchData = fetchData?.dataValues;
       if (!fetchData) {
-        return { message: "no script found" };
+        return [404, { message: "no script found" }];
       }
       delete fetchData.user.dataValues.password;
       fetchData.message = "script fetched successfully";
-      return fetchData;
+      return [200, fetchData];
     } catch (err) {
       throw { message: err };
     }
@@ -44,7 +44,7 @@ class ScriptService {
   async create(data) {
     try {
       const createRes = await this.schema.create(data);
-      return createRes;
+      return [201, createRes];
     } catch (err) {
       throw { message: err };
     }
@@ -54,9 +54,12 @@ class ScriptService {
     try {
       const updateRes = await this.schema.update(data, { where: { id: id } });
 
-      if (updateRes[0] === 0) throw "unable to update script";
-      return { message: "script updated successfully" };
+      if (updateRes[0] === 0) {
+        return [404, { message: "no script found with given id" }];
+      }
+      return [200, { message: "script updated successfully" }];
     } catch (err) {
+      // "unable to update script"
       throw { message: err };
     }
   }
@@ -65,9 +68,12 @@ class ScriptService {
     try {
       const deleteRes = await this.schema.destroy({ where: { id: id } });
 
-      if (deleteRes === 0) throw "unable to delete script";
-      return { message: "script deleted successfully" };
+      if (deleteRes === 0) {
+        return [404, { message: "no script found with given id" }];
+      }
+      return [200, { message: "script deleted successfully" }];
     } catch (err) {
+      // "unable to delete script"
       throw { message: err };
     }
   }

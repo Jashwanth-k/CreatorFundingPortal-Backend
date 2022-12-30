@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require("Sequelize");
+require("dotenv").config();
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config.json")[env];
 const db = {};
@@ -27,7 +28,7 @@ db.music.belongsTo(db.user);
 db.user.hasMany(db.nft);
 db.nft.belongsTo(db.user);
 
-db.user.belongsToMany(db.role, { through: "userRoles" });
-db.role.belongsToMany(db.user, { through: "userRoles" });
+db.role.hasMany(db.user);
+db.user.belongsTo(db.role);
 
 module.exports = db;

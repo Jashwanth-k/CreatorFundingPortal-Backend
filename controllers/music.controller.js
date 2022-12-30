@@ -8,10 +8,10 @@ function sendResponse(res, status, resObj) {
 async function getAllMusics(req, res) {
   res.setHeader("content-type", "application/json");
   try {
-    const fetchRes = await musicService.getAll();
-    sendResponse(res, 200, fetchRes);
+    const [status, fetchRes] = await musicService.getAll();
+    sendResponse(res, status, fetchRes);
   } catch (err) {
-    sendResponse(res, err.message === "no musics found" ? 200 : 500, err);
+    sendResponse(res, 500, err);
   }
 }
 
@@ -19,10 +19,10 @@ async function getMusicById(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    let fetchRes = await musicService.getOne(id);
-    sendResponse(res, 200, fetchRes);
+    const [status, fetchRes] = await musicService.getOne(id);
+    sendResponse(res, status, fetchRes);
   } catch (err) {
-    sendResponse(res, err.message === "no music found" ? 200 : 500, err);
+    sendResponse(res, 500, err);
   }
 }
 
@@ -31,8 +31,8 @@ async function createMusic(req, res) {
   try {
     const createData = req.body;
     createData.userId = 1;
-    const createRes = await musicService.create(createData);
-    sendResponse(res, 201, createRes);
+    const [status, createRes] = await musicService.create(createData);
+    sendResponse(res, status, createRes);
   } catch (err) {
     sendResponse(res, 500, err);
   }
@@ -43,8 +43,8 @@ async function updateMusic(req, res) {
   try {
     const updateData = req.body;
     const id = parseInt(req.params.id);
-    const updateRes = await musicService.update(updateData, id);
-    sendResponse(res, 201, updateRes);
+    const [status, updateRes] = await musicService.update(updateData, id);
+    sendResponse(res, status, updateRes);
   } catch (err) {
     sendResponse(res, 500, err);
   }
@@ -54,8 +54,8 @@ async function deleteMusic(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    const deleteRes = await musicService.delete(id);
-    sendResponse(res, 201, deleteRes);
+    const [status, deleteRes] = await musicService.delete(id);
+    sendResponse(res, status, deleteRes);
   } catch (err) {
     sendResponse(res, 500, err);
   }

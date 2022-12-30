@@ -5,12 +5,20 @@ class UserService {
     this.schema = db.user;
   }
 
-  getUserById(id) {
-    return this.schema.findByPk(id);
+  create(user) {
+    return this.schema.create(user);
   }
 
   getUserByEmail(email) {
     return this.schema.findOne({
+      where: {
+        email: email,
+      },
+    });
+  }
+
+  deleteUserByEmail(email) {
+    return this.schema.destroy({
       where: {
         email: email,
       },

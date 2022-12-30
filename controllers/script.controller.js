@@ -9,10 +9,10 @@ function sendResponse(res, status, resObj) {
 async function getAllScripts(req, res) {
   res.setHeader("content-type", "application/json");
   try {
-    const fetchData = await scriptService.getAll();
-    sendResponse(res, 200, fetchData);
+    const [status, fetchData] = await scriptService.getAll();
+    sendResponse(res, status, fetchData);
   } catch (err) {
-    sendResponse(res, err.message === "no scripts found" ? 200 : 500, err);
+    sendResponse(res, 500, err);
   }
 }
 
@@ -20,10 +20,10 @@ async function getScriptById(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    let fetchData = await scriptService.getOne(id);
-    sendResponse(res, 200, fetchData);
+    let [status, fetchData] = await scriptService.getOne(id);
+    sendResponse(res, status, fetchData);
   } catch (err) {
-    sendResponse(res, err.message === "no script found" ? 200 : 500, err);
+    sendResponse(res, 500, err);
   }
 }
 
@@ -32,8 +32,8 @@ async function createScript(req, res) {
   try {
     const scriptData = req.body;
     scriptData.userId = 1;
-    const createRes = await scriptService.create(scriptData);
-    sendResponse(res, 201, createRes);
+    const [status, createRes] = await scriptService.create(scriptData);
+    sendResponse(res, status, createRes);
   } catch (err) {
     sendResponse(res, 500, err);
   }
@@ -44,8 +44,8 @@ async function updateScript(req, res) {
   try {
     const scriptData = req.body;
     const id = parseInt(req.params.id);
-    const updateRes = await scriptService.update(scriptData, id);
-    sendResponse(res, 201, updateRes);
+    const [status, updateRes] = await scriptService.update(scriptData, id);
+    sendResponse(res, status, updateRes);
   } catch (err) {
     sendResponse(res, 500, err);
   }
@@ -55,8 +55,8 @@ async function deleteScript(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    const deleteRes = await scriptService.delete(id);
-    sendResponse(res, 201, deleteRes);
+    const [status, deleteRes] = await scriptService.delete(id);
+    sendResponse(res, status, deleteRes);
   } catch (err) {
     sendResponse(res, 500, err);
   }
