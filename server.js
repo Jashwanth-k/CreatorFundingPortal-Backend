@@ -9,38 +9,8 @@ const authRouter = require("./routes/auth.route");
 
 db.sequelize.sync({ force: true, alter: true }).then(() => init());
 function init() {
-  const userData = [
-    {
-      id: 1,
-      name: "robert",
-      email: "robert123@gmail.com",
-      password: "something",
-      roleId: 2,
-      createdAt: "2008-7-04",
-      updatedAt: "2008-7-04",
-    },
-  ];
-  const scriptData = [
-    {
-      id: 1,
-      image: "xyz.com",
-      price: 120,
-      currencyType: "ethereum",
-      userId: 1,
-    },
-    {
-      id: 2,
-      image: "xyz.com",
-      price: 88,
-      currencyType: "ethereum",
-      userId: 1,
-    },
-  ];
-
   const rolesData = [{ name: "user" }, { name: "creator" }];
   db.role.bulkCreate(rolesData);
-  db.user.bulkCreate(userData);
-  db.script.bulkCreate(scriptData);
 }
 
 app.use("/script", scriptRouter);

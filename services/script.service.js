@@ -18,7 +18,7 @@ class ScriptService {
       newData.push({ message: "scripts fetched successfully" });
       return [200, newData];
     } catch (err) {
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -37,7 +37,7 @@ class ScriptService {
       fetchData.message = "script fetched successfully";
       return [200, fetchData];
     } catch (err) {
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -46,7 +46,7 @@ class ScriptService {
       const createRes = await this.schema.create(data);
       return [201, createRes];
     } catch (err) {
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -60,7 +60,7 @@ class ScriptService {
       return [200, { message: "script updated successfully" }];
     } catch (err) {
       // "unable to update script"
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -74,7 +74,7 @@ class ScriptService {
       return [200, { message: "script deleted successfully" }];
     } catch (err) {
       // "unable to delete script"
-      throw { message: err };
+      throw err;
     }
   }
 }

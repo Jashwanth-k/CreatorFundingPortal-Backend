@@ -17,7 +17,7 @@ module.exports = function (sequelize, DataTypes) {
       },
       price: {
         type: DataTypes.INTEGER,
-        defaultValue: 0,
+        allowNull: false,
       },
       currencyType: {
         type: DataTypes.STRING,

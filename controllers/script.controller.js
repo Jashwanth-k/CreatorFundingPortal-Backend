@@ -12,7 +12,7 @@ async function getAllScripts(req, res) {
     const [status, fetchData] = await scriptService.getAll();
     sendResponse(res, status, fetchData);
   } catch (err) {
-    sendResponse(res, 500, err);
+    sendResponse(res, 500, { message: err.message });
   }
 }
 
@@ -23,7 +23,7 @@ async function getScriptById(req, res) {
     let [status, fetchData] = await scriptService.getOne(id);
     sendResponse(res, status, fetchData);
   } catch (err) {
-    sendResponse(res, 500, err);
+    sendResponse(res, 500, { message: err.message });
   }
 }
 
@@ -31,11 +31,11 @@ async function createScript(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const scriptData = req.body;
-    scriptData.userId = 1;
+    scriptData.userId = req.token?.id;
     const [status, createRes] = await scriptService.create(scriptData);
     sendResponse(res, status, createRes);
   } catch (err) {
-    sendResponse(res, 500, err);
+    sendResponse(res, 500, { message: err.message });
   }
 }
 
@@ -47,7 +47,7 @@ async function updateScript(req, res) {
     const [status, updateRes] = await scriptService.update(scriptData, id);
     sendResponse(res, status, updateRes);
   } catch (err) {
-    sendResponse(res, 500, err);
+    sendResponse(res, 500, { message: err.message });
   }
 }
 
@@ -58,7 +58,7 @@ async function deleteScript(req, res) {
     const [status, deleteRes] = await scriptService.delete(id);
     sendResponse(res, status, deleteRes);
   } catch (err) {
-    sendResponse(res, 500, err);
+    sendResponse(res, 500, { message: err.message });
   }
 }
 

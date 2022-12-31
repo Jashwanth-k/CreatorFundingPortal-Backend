@@ -9,9 +9,13 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    script: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     price: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
+      allowNull: false,
     },
     currencyType: {
       type: DataTypes.STRING,

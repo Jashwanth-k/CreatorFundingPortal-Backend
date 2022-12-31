@@ -18,7 +18,7 @@ class MusicService {
       newData.push({ message: "musics fetched successfully" });
       return [200, newData];
     } catch (err) {
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -37,7 +37,7 @@ class MusicService {
       fetchData.message = "music fetched successfully";
       return [200, fetchData];
     } catch (err) {
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -46,7 +46,7 @@ class MusicService {
       const createRes = await this.schema.create(data);
       return [201, createRes];
     } catch (err) {
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -60,7 +60,7 @@ class MusicService {
       return [200, { message: "music updated successfully" }];
     } catch (err) {
       // "unable to update music"
-      throw { message: err };
+      throw err;
     }
   }
 
@@ -74,7 +74,7 @@ class MusicService {
       return [200, { message: "music deleted successfully" }];
     } catch (err) {
       // "unable to delete music"
-      throw { message: err };
+      throw err;
     }
   }
 }

@@ -13,6 +13,13 @@ class AuthService {
       if (!rolesRes) {
         return [404, { message: "invalid role name" }];
       }
+      const userRes = await userService.getUserByEmail(
+        userData.email.toLowerCase()
+      );
+      if (userRes) {
+        return [409, { message: "user eamil already exists" }];
+      }
+
       const user = {
         name: userData.name,
         email: userData.email.toLowerCase(),
@@ -40,6 +47,7 @@ class AuthService {
 
       const role = await user.getRole();
       const payload = {
+        id: user.id,
         email: user.email,
         role: role.name,
       };
@@ -63,7 +71,7 @@ class AuthService {
 
       const deleteRes = await userService.deleteUserByEmail(email);
       if (deleteRes === 0) throw "unable to delete user";
-      return [200, { message: "user deleted successfully" }];
+      return [200, { message: "user account deleted successfully" }];
     } catch (err) {
       throw err;
     }
