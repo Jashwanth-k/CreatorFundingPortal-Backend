@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require("Sequelize");
 require("dotenv").config();
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV;
 const config = require("../config/config.json")[env];
 const db = {};
 const sequelize = new Sequelize(
@@ -9,6 +9,7 @@ const sequelize = new Sequelize(
   config.password,
   {
     dialect: config.dialect,
+    host: config.host,
   }
 );
 
