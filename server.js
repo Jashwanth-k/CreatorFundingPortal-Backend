@@ -1,6 +1,7 @@
 const db = require("./models/index");
 const fs = require("fs");
 const { app } = require("./app");
+const cors = require("cors");
 const scriptRouter = require("./routes/script.route");
 const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
