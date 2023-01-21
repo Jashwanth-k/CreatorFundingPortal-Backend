@@ -7,6 +7,7 @@ const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
 // to send images from file system
 // app.use("/images", express.static("images"));
+app.use(cors());
 
 db.sequelize.sync({ force: true, alter: true }).then(() => init());
 function init() {
