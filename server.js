@@ -6,16 +6,6 @@ const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
 // to send images from file system
 // app.use("/images", express.static("images"));
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-api-key"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
 
 db.sequelize.sync({ force: true, alter: true }).then(() => init());
 function init() {
