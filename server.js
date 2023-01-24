@@ -7,12 +7,13 @@ const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
 // to send images from file system
 // app.use("/images", express.static("images"));
-const corsOpt = {
-  origin: "*",
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-};
-app.use(cors(corsOpt));
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
 
 db.sequelize.sync({ force: true, alter: true }).then(() => init());
 function init() {
