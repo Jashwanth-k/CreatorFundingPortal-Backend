@@ -1,11 +1,9 @@
 const db = require("./models/index");
-const fs = require("fs");
-const { app } = require("./app");
+const path = require("path");
+const { app, express } = require("./app");
 const scriptRouter = require("./routes/script.route");
 const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
-// to send images from file system
-// app.use("/images", express.static("images"));
 
 db.sequelize.sync({ force: true, alter: true }).then(() => init());
 function init() {
@@ -13,6 +11,10 @@ function init() {
   db.role.bulkCreate(rolesData);
 }
 
+app.use(
+  process.env.UPLOAD_DIR,
+  express.static(path.join(__dirname + process.env.UPLOAD_DIR))
+);
 app.use("/script", scriptRouter);
 app.use("/music", musicRouter);
 app.use("/auth", authRouter);
