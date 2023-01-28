@@ -64,9 +64,11 @@ class MusicService {
     }
   }
 
-  async delete(id) {
+  async delete(id, isUserId = false) {
     try {
-      const deleteRes = await this.schema.destroy({ where: { id: id } });
+      const deleteRes = await this.schema.destroy(
+        isUserId ? { where: { userId: id } } : { where: { id: id } }
+      );
 
       if (deleteRes === 0) {
         return [404, { message: "no music found with given id" }];

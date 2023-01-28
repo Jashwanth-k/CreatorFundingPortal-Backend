@@ -20,6 +20,13 @@ router.post(
   ],
   authController.login
 );
-router.delete("/delete", [mainValidator.validateId], authController.deleteUser);
+router.delete(
+  "/delete",
+  [
+    authValidator.validateAuthBody.bind(null, true),
+    authValidator.validateJwtToken,
+  ],
+  authController.deleteUser
+);
 
 module.exports = router;

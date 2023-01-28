@@ -2,7 +2,8 @@ const userService = require("../services/user.service");
 const roleService = require("../services/role.service");
 const jwtService = require("../services/jwt.service");
 const bcrypt = require("bcrypt");
-const { deleteUser } = require("../controllers/auth.controller");
+const scriptService = require("./script.service");
+const musicService = require("./music.service");
 
 class AuthService {
   constructor() {}
@@ -69,7 +70,10 @@ class AuthService {
         return [401, { message: "incorrect password" }];
       }
 
+      await scriptService.delete(userData.userId, true);
+      await musicService.delete(userData.userId, true);
       const deleteRes = await userService.deleteUserByEmail(email);
+
       if (deleteRes === 0) throw "unable to delete user";
       return [200, { message: "user account deleted successfully" }];
     } catch (err) {

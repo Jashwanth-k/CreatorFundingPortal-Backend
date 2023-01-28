@@ -9,16 +9,12 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    imageSource: {
+    image: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     price: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    currencyType: {
-      type: DataTypes.STRING,
       allowNull: false,
     },
   });

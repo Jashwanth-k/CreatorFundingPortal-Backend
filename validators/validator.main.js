@@ -22,10 +22,8 @@ function validateBody(update, validator, req, res, next) {
   try {
     const userData = req.body;
     let fields;
-    if (validator === "music")
-      fields = ["image", "audio", "price", "currencyType"];
-    if (validator === "script")
-      fields = ["image", "script", "price", "currencyType"];
+    if (validator === "music") fields = ["image", "audio", "price", "name"];
+    if (validator === "script") fields = ["image", "script", "price", "name"];
     let check = update ? true : false;
     for (let key of fields) {
       check = update ? check && !userData[key] : check || !userData[key];
