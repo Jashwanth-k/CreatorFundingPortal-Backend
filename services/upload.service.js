@@ -1,10 +1,9 @@
 const multer = require("multer");
-const path = require("path");
 class UploadService {
   upload;
   destFolder;
   constructor() {
-    this.destFolder = path.join(__dirname + process.env.UPLOAD_DIR);
+    this.destFolder = __dirname + process.env.UPLOAD_DIR;
     this.upload = multer({
       limits: { fileSize: process.env.MAX_FILE_SIZE },
       storage: multer.diskStorage({

@@ -1,5 +1,4 @@
 const db = require("./models/index");
-const path = require("path");
 const { app, express } = require("./app");
 const scriptRouter = require("./routes/script.route");
 const musicRouter = require("./routes/music.route");
@@ -13,7 +12,7 @@ function init() {
 
 app.use(
   process.env.UPLOAD_DIR,
-  express.static(path.join(__dirname + process.env.UPLOAD_DIR))
+  express.static(__dirname + process.env.UPLOAD_DIR)
 );
 app.use("/script", scriptRouter);
 app.use("/music", musicRouter);
