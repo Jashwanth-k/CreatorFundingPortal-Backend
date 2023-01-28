@@ -14,6 +14,7 @@ const sequelize = new Sequelize(
 );
 
 db.sequelize = sequelize;
+db.Op = Sequelize.Op;
 db.script = require("./script.model")(sequelize, DataTypes);
 db.music = require("../models/music.model")(sequelize, DataTypes);
 db.nft = require("../models/nft.model")(sequelize, DataTypes);

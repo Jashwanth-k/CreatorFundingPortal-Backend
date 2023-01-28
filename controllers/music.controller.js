@@ -1,3 +1,4 @@
+const fileService = require("../services/file.service");
 const musicService = require("../services/music.service");
 
 function sendResponse(res, status, resObj) {
@@ -8,7 +9,7 @@ function sendResponse(res, status, resObj) {
 async function getAllMusics(req, res) {
   res.setHeader("content-type", "application/json");
   try {
-    const [status, fetchRes] = await musicService.getAll();
+    const [status, fetchRes] = await musicService.getAll(req.query);
     sendResponse(res, status, fetchRes);
   } catch (err) {
     sendResponse(res, 500, { message: err.message });
@@ -34,6 +35,7 @@ async function createMusic(req, res) {
     const [status, createRes] = await musicService.create(createData);
     sendResponse(res, status, createRes);
   } catch (err) {
+    fileService.delete([req.image, req.audio]);
     sendResponse(res, 500, { message: err.message });
   }
 }
@@ -41,8 +43,16 @@ async function createMusic(req, res) {
 async function updateMusic(req, res) {
   res.setHeader("content-type", "application/json");
   try {
-    const updateData = req.body;
     const id = parseInt(req.params.id);
+    const updateData = req.body;
+    const [, music] = await musicService.getOne(id);
+    if (req.body.image) {
+      fileService.delete([music.image]);
+    }
+    if (req.body.audio) {
+      fileService.delete([music.audio]);
+    }
+
     const [status, updateRes] = await musicService.update(updateData, id);
     sendResponse(res, status, updateRes);
   } catch (err) {

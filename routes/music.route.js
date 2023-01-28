@@ -1,27 +1,32 @@
 const { express } = require("../app");
 const musicController = require("../controllers/music.controller");
+const fileService = require("../services/file.service");
 const authValidator = require("../validators/auth.validator");
 const mainValidator = require("../validators/validator.main");
 const router = express.Router();
+
+// const musicUpload =
 
 router.get("/all", musicController.getAllMusics);
 router.get("/:id", [mainValidator.validateId], musicController.getMusicById);
 router.post(
   "/create",
   [
-    mainValidator.validateBody.bind(null, false, "music"),
     authValidator.validateJwtToken,
     mainValidator.isCreator,
+    fileService.fileUploader.bind(fileService),
+    mainValidator.validateBody.bind(null, false, "music"),
   ],
   musicController.createMusic
 );
 router.put(
   "/update/:id",
   [
-    mainValidator.validateBody.bind(null, true, "music"),
     mainValidator.validateId,
     authValidator.validateJwtToken,
     mainValidator.isCreator,
+    fileService.fileUploader.bind(fileService),
+    mainValidator.validateBody.bind(null, true, "music"),
   ],
   musicController.updateMusic
 );

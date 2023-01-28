@@ -70,8 +70,8 @@ class AuthService {
         return [401, { message: "incorrect password" }];
       }
 
-      await scriptService.delete(userData.userId, true);
-      await musicService.delete(userData.userId, true);
+      await scriptService.delete(user.id, true);
+      await musicService.delete(user.id, true);
       const deleteRes = await userService.deleteUserByEmail(email);
 
       if (deleteRes === 0) throw "unable to delete user";

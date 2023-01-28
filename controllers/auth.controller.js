@@ -31,7 +31,6 @@ async function deleteUser(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const user = req.body;
-    user.userId = req.token?.id;
     const [status, deleteRes] = await authService.delete(user);
     sendResponse(res, status, deleteRes);
   } catch (err) {

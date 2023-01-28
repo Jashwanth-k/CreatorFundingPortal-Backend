@@ -1,5 +1,5 @@
 const db = require("./models/index");
-const { app, express } = require("./app");
+const { app, express, uploadDir } = require("./app");
 const scriptRouter = require("./routes/script.route");
 const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
@@ -10,10 +10,7 @@ function init() {
   db.role.bulkCreate(rolesData);
 }
 
-app.use(
-  process.env.UPLOAD_DIR,
-  express.static(__dirname + process.env.UPLOAD_DIR)
-);
+app.use(process.env.UPLOAD_DIR, express.static(uploadDir));
 app.use("/script", scriptRouter);
 app.use("/music", musicRouter);
 app.use("/auth", authRouter);

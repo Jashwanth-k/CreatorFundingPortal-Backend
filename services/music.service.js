@@ -1,13 +1,30 @@
 const db = require("../models/index");
+const fileService = require("./file.service");
 
 class MusicService {
   constructor() {
     this.schema = db.music;
   }
 
-  async getAll() {
+  #buildFilter(filters) {
+    const component = {};
+    if (filters.userId) {
+      component.userId = filters.userId;
+    }
+    component["price"] = {
+      [db.Op.lte]: Number(filters["maxPrice"]) || Number.MAX_VALUE,
+      [db.Op.gte]: Number(filters["minPrice"]) || Number.MIN_VALUE,
+    };
+    return component;
+  }
+
+  async getAll(filters) {
     try {
-      const fetchData = await this.schema.findAll({ include: db.user });
+      const buildfilters = this.#buildFilter(filters);
+      const fetchData = await this.schema.findAll({
+        where: buildfilters,
+        include: db.user,
+      });
       if (fetchData.length === 0) {
         return [404, { message: "no musics found" }];
       }
@@ -66,6 +83,15 @@ class MusicService {
 
   async delete(id, isUserId = false) {
     try {
+      if (isUserId) {
+        const [_, toDelete] = await this.getAll({ userId: id });
+        toDelete.length &&
+          toDelete.forEach((el) => fileService.delete([el.image, el.audio]));
+      } else {
+        const [_, toDelete] = await this.getOne(id);
+        fileService.delete([toDelete.image, toDelete.audio]);
+      }
+
       const deleteRes = await this.schema.destroy(
         isUserId ? { where: { userId: id } } : { where: { id: id } }
       );
