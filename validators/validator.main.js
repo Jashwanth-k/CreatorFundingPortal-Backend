@@ -23,7 +23,7 @@ function validateBody(update, validator, req, res, next) {
     const userData = req.body;
     let fields;
     if (validator === "music") fields = ["image", "audio", "price", "name"];
-    if (validator === "script") fields = ["image", "script", "price", "name"];
+    if (validator === "script") fields = ["image", "text", "price", "name"];
     let check = update ? true : false;
     for (let key of fields) {
       check = update ? check && !userData[key] : check || !userData[key];
@@ -31,6 +31,7 @@ function validateBody(update, validator, req, res, next) {
 
     if (check) {
       sendResponse(res, 400, { message: "incorrect body format" });
+      fileService.delete([req.body.image, req.body.audio, req.body.text]);
       return;
     }
     next();

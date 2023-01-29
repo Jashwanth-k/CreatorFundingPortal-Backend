@@ -1,5 +1,5 @@
 const scriptService = require("../services/script.service");
-const userService = require("../services/user.service");
+const fileService = require("../services/file.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -9,10 +9,10 @@ function sendResponse(res, status, resObj) {
 async function getAllScripts(req, res) {
   res.setHeader("content-type", "application/json");
   try {
-    const [status, fetchData] = await scriptService.getAll();
-    sendResponse(res, status, fetchData);
+    const fetchData = await scriptService.getAll(req.query);
+    sendResponse(res, 200, fetchData);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 
@@ -20,10 +20,10 @@ async function getScriptById(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    let [status, fetchData] = await scriptService.getOne(id);
-    sendResponse(res, status, fetchData);
+    let fetchData = await scriptService.getOne(id);
+    sendResponse(res, 200, fetchData);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 
@@ -32,22 +32,32 @@ async function createScript(req, res) {
   try {
     const scriptData = req.body;
     scriptData.userId = req.token?.id;
-    const [status, createRes] = await scriptService.create(scriptData);
-    sendResponse(res, status, createRes);
+    const createRes = await scriptService.create(scriptData);
+    sendResponse(res, 201, createRes);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    fileService.delete([req.body.image, req.body.text]);
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 
 async function updateScript(req, res) {
   res.setHeader("content-type", "application/json");
   try {
-    const scriptData = req.body;
     const id = parseInt(req.params.id);
-    const [status, updateRes] = await scriptService.update(scriptData, id);
-    sendResponse(res, status, updateRes);
+    const userId = req.token?.id;
+    const updateData = req.body;
+    const script = await scriptService.getOne(id, userId);
+    if (req.body.image) {
+      fileService.delete([script.image]);
+    }
+    if (req.body.text) {
+      fileService.delete([script.text]);
+    }
+    const updateRes = await scriptService.update(updateData, id);
+    sendResponse(res, 200, updateRes);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    fileService.delete([req.body.image, req.body.text]);
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 
@@ -55,10 +65,10 @@ async function deleteScript(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    const [status, deleteRes] = await scriptService.delete(id);
-    sendResponse(res, status, deleteRes);
+    const deleteRes = await scriptService.delete(id, req.token?.id);
+    sendResponse(res, 200, deleteRes);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 

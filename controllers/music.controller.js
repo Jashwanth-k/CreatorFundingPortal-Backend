@@ -21,7 +21,7 @@ async function getMusicById(req, res) {
   try {
     const id = parseInt(req.params.id);
     const fetchRes = await musicService.getOne(id);
-    sendResponse(res, 201, fetchRes);
+    sendResponse(res, 200, fetchRes);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });
   }

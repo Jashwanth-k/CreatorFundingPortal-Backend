@@ -24,14 +24,14 @@ class MusicService {
     return err;
   }
 
-  async getAll(filters) {
+  async getAll(filters, deleteAll) {
     try {
       const buildfilters = this.#buildFilter(filters);
       const fetchData = await this.schema.findAll({
         where: buildfilters,
         include: db.user,
       });
-      if (fetchData.length === 0)
+      if (!deleteAll && fetchData.length === 0)
         throw this.createError(404, "no musics found");
 
       const newData = fetchData.map((el) => {
@@ -45,7 +45,7 @@ class MusicService {
     }
   }
 
-  async getOne(id, userId) {
+  async getOne(id, userId, deleteAll) {
     try {
       let fetchData = await this.schema.findOne({
         where: { id: id },
@@ -53,7 +53,8 @@ class MusicService {
       });
 
       fetchData = fetchData?.dataValues;
-      if (!fetchData) throw this.createError(404, "no music found");
+      if (!deleteAll && !fetchData)
+        throw this.createError(404, "no music found");
 
       if (userId && fetchData.userId !== userId)
         throw this.createError(401, "resource doesn't belongs to the user");
@@ -92,10 +93,10 @@ class MusicService {
   async delete(id, userId, deleteAll) {
     try {
       if (deleteAll) {
-        const toDelete = await this.getAll({ userId: userId });
+        const toDelete = await this.getAll({ userId: userId }, userId);
         toDelete.forEach((el) => fileService.delete([el.image, el.audio]));
       } else {
-        const toDelete = await this.getOne(id);
+        const toDelete = await this.getOne(id, userId);
         if (toDelete.userId && toDelete.userId !== userId)
           throw this.createError(401, "resource doesn't belongs to the user");
         fileService.delete([toDelete.image, toDelete.audio]);
@@ -105,7 +106,7 @@ class MusicService {
         deleteAll ? { where: { userId: userId } } : { where: { id: id } }
       );
 
-      if (deleteRes === 0)
+      if (!deleteAll && deleteRes === 0)
         throw this.createError(404, "no music found with given id");
       return { message: "music deleted successfully" };
     } catch (err) {

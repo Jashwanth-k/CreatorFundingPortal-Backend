@@ -5,8 +5,6 @@ const authValidator = require("../validators/auth.validator");
 const mainValidator = require("../validators/validator.main");
 const router = express.Router();
 
-// const musicUpload =
-
 router.get("/all", musicController.getAllMusics);
 router.get("/:id", [mainValidator.validateId], musicController.getMusicById);
 router.post(

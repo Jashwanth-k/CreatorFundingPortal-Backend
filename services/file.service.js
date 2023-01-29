@@ -44,14 +44,9 @@ class FileService {
         res.end(JSON.stringify({ message: err.message }));
         return;
       }
-      req.files.forEach((file) => {
-        if (file.mimetype.includes("image")) {
-          req.body.image = file.filename;
-        }
-        if (file.mimetype.includes("audio")) {
-          req.body.audio = file.filename;
-        }
-      });
+      req.files.forEach(
+        (file) => (req.body[file.mimetype.split("/")[0]] = file.filename)
+      );
       next();
     });
   }
@@ -65,3 +60,7 @@ class FileService {
 
 const fileService = new FileService();
 module.exports = fileService;
+
+// if (file.mimetype.includes("audio")) {
+//   req.body.audio = file.filename;
+// }

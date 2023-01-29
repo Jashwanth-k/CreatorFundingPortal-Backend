@@ -67,7 +67,7 @@ class AuthService {
       if (!bcrypt.compareSync(userData.password, user.password))
         throw this.createError(401, "incorrect password");
 
-      await scriptService.delete(user.id, true);
+      await scriptService.delete(false, user.id, true);
       await musicService.delete(false, user.id, true);
       const deleteRes = await userService.deleteUserByEmail(email);
 
