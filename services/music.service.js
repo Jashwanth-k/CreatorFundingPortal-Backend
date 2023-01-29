@@ -26,7 +26,7 @@ class MusicService {
         include: db.user,
       });
       if (fetchData.length === 0) {
-        return [404, { message: "no musics found" }];
+        return [404, [{ message: "no musics found" }]];
       }
       const newData = fetchData.map((el) => {
         delete el.dataValues.user.dataValues.password;
@@ -39,7 +39,7 @@ class MusicService {
     }
   }
 
-  async getOne(id) {
+  async getOne(id, userId) {
     try {
       let fetchData = await this.schema.findOne({
         where: { id: id },
@@ -50,6 +50,15 @@ class MusicService {
       if (!fetchData) {
         return [404, { message: "no music found" }];
       }
+      if (userId && fetchData.userId !== userId) {
+        return [
+          401,
+          {
+            message: "resource doesn't belongs to the user",
+          },
+        ];
+      }
+
       delete fetchData.user.dataValues.password;
       fetchData.message = "music fetched successfully";
       return [200, fetchData];
@@ -81,19 +90,21 @@ class MusicService {
     }
   }
 
-  async delete(id, isUserId = false) {
+  async delete(id, userId, deleteAll) {
     try {
-      if (isUserId) {
-        const [_, toDelete] = await this.getAll({ userId: id });
-        toDelete.length &&
-          toDelete.forEach((el) => fileService.delete([el.image, el.audio]));
+      if (deleteAll) {
+        const [_, toDelete] = await this.getAll({ userId: userId });
+        toDelete.forEach((el) => fileService.delete([el.image, el.audio]));
       } else {
         const [_, toDelete] = await this.getOne(id);
+        if (toDelete.userId && toDelete.userId !== userId) {
+          return [401, { message: "resource doesn't belongs to the user" }];
+        }
         fileService.delete([toDelete.image, toDelete.audio]);
       }
 
       const deleteRes = await this.schema.destroy(
-        isUserId ? { where: { userId: id } } : { where: { id: id } }
+        deleteAll ? { where: { userId: userId } } : { where: { id: id } }
       );
 
       if (deleteRes === 0) {

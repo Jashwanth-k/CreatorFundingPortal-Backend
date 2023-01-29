@@ -1,4 +1,5 @@
 const jwtService = require("../services/jwt.service");
+const userService = require("../services/user.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -32,6 +33,12 @@ async function validateJwtToken(req, res, next) {
       return;
     }
     const token = await jwtService.validateToken(userToken.slice(7));
+    const user = await userService.getUserByEmail(token.email);
+    if (token.email !== user?.email || token.id !== user?.id) {
+      sendResponse(res, 498, { message: "invalid token" });
+      return;
+    }
+
     req.token = token;
     next();
   } catch (err) {

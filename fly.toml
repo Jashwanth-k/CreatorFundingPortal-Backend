@@ -1,6 +1,6 @@
-# fly.toml file generated for fundportal on 2023-01-28T10:44:38+05:30
+# fly.toml file generated for fundingportal on 2023-01-29T00:48:05+05:30
 
-app = "fundportal"
+app = "fundingportal"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []

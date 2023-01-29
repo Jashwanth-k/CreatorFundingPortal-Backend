@@ -35,7 +35,7 @@ async function createMusic(req, res) {
     const [status, createRes] = await musicService.create(createData);
     sendResponse(res, status, createRes);
   } catch (err) {
-    fileService.delete([req.image, req.audio]);
+    fileService.delete([req.body.image, req.body.audio]);
     sendResponse(res, 500, { message: err.message });
   }
 }
@@ -44,8 +44,12 @@ async function updateMusic(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
+    const userId = req.token.id;
     const updateData = req.body;
-    const [, music] = await musicService.getOne(id);
+    const [isStatus401, music] = await musicService.getOne(id, userId);
+    if (isStatus401 === 401) {
+      throw Error(music);
+    }
     if (req.body.image) {
       fileService.delete([music.image]);
     }
@@ -56,6 +60,7 @@ async function updateMusic(req, res) {
     const [status, updateRes] = await musicService.update(updateData, id);
     sendResponse(res, status, updateRes);
   } catch (err) {
+    fileService.delete([req.body.image, req.body.audio]);
     sendResponse(res, 500, { message: err.message });
   }
 }
@@ -64,7 +69,7 @@ async function deleteMusic(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const id = parseInt(req.params.id);
-    const [status, deleteRes] = await musicService.delete(id);
+    const [status, deleteRes] = await musicService.delete(id, req.token?.id);
     sendResponse(res, status, deleteRes);
   } catch (err) {
     sendResponse(res, 500, { message: err.message });
