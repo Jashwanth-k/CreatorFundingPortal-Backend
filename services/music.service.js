@@ -93,10 +93,10 @@ class MusicService {
   async delete(id, userId, deleteAll) {
     try {
       if (deleteAll) {
-        const toDelete = await this.getAll({ userId: userId }, userId);
+        const toDelete = await this.getAll({ userId: userId }, true);
         toDelete.forEach((el) => fileService.delete([el.image, el.audio]));
       } else {
-        const toDelete = await this.getOne(id, userId);
+        const toDelete = await this.getOne(id, true);
         if (toDelete.userId && toDelete.userId !== userId)
           throw this.createError(401, "resource doesn't belongs to the user");
         fileService.delete([toDelete.image, toDelete.audio]);
