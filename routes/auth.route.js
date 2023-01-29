@@ -22,10 +22,7 @@ router.post(
 );
 router.delete(
   "/delete",
-  [
-    authValidator.validateAuthBody.bind(null, true),
-    authValidator.validateJwtToken,
-  ],
+  [authValidator.validateAuthBody.bind(null, true)],
   authController.deleteUser
 );
 

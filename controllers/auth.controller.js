@@ -9,10 +9,10 @@ async function createUser(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const user = req.body;
-    const [status, createRes] = await authService.signUp(user);
-    sendResponse(res, status, createRes);
+    const createRes = await authService.signUp(user);
+    sendResponse(res, 201, createRes);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 
@@ -20,10 +20,10 @@ async function login(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const user = req.body;
-    const [status, loginRes] = await authService.signIn(user);
-    sendResponse(res, status, loginRes);
+    const loginRes = await authService.signIn(user);
+    sendResponse(res, 200, loginRes);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 
@@ -31,10 +31,10 @@ async function deleteUser(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const user = req.body;
-    const [status, deleteRes] = await authService.delete(user);
-    sendResponse(res, status, deleteRes);
+    const deleteRes = await authService.delete(user);
+    sendResponse(res, 200, deleteRes);
   } catch (err) {
-    sendResponse(res, 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message });
   }
 }
 

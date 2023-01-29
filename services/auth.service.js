@@ -7,20 +7,21 @@ const musicService = require("./music.service");
 
 class AuthService {
   constructor() {}
+  createError(status, message) {
+    const err = new Error(message);
+    err.status = status;
+    return err;
+  }
 
   async signUp(userData) {
     try {
       const rolesRes = await roleService.getRoleByName(userData.role);
-      if (!rolesRes) {
-        return [404, { message: "invalid role name" }];
-      }
+      if (!rolesRes) throw this.createError(404, "invalid role name");
       const userRes = await userService.getUserByEmail(
         userData.email.toLowerCase()
       );
-      if (userRes) {
-        return [409, { message: "user eamil already exists" }];
-      }
 
+      if (userRes) throw this.createError(409, "user eamil already exists");
       const user = {
         name: userData.name,
         email: userData.email.toLowerCase(),
@@ -28,7 +29,7 @@ class AuthService {
         roleId: rolesRes.id,
       };
       await userService.create(user);
-      return [201, { message: "user created successfully" }];
+      return { message: "user created successfully" };
     } catch (err) {
       throw err;
     }
@@ -39,12 +40,10 @@ class AuthService {
       const user = await userService.getUserByEmail(
         userData.email.toLowerCase()
       );
-      if (!user) {
-        return [404, { message: "no user found with given email" }];
-      }
-      if (!bcrypt.compareSync(userData.password, user.password)) {
-        return [401, { message: "incorrect password" }];
-      }
+      if (!user) throw this.createError(404, "no user found with given email");
+
+      if (!bcrypt.compareSync(userData.password, user.password))
+        throw this.createError(401, "incorrect password");
 
       const role = await user.getRole();
       const payload = {
@@ -53,7 +52,7 @@ class AuthService {
         role: role.name,
       };
       const token = await jwtService.createToken(payload);
-      return [200, { message: "success", token: `Bearer ${token}` }];
+      return { message: "success", token: `Bearer ${token}` };
     } catch (err) {
       throw err;
     }
@@ -63,19 +62,17 @@ class AuthService {
     try {
       const email = userData.email.toLowerCase();
       const user = await userService.getUserByEmail(email);
-      if (!user) {
-        return [404, { message: "no user found with given email" }];
-      }
-      if (!bcrypt.compareSync(userData.password, user.password)) {
-        return [401, { message: "incorrect password" }];
-      }
+      if (!user) throw this.createError(404, "no user found with given email");
+
+      if (!bcrypt.compareSync(userData.password, user.password))
+        throw this.createError(401, "incorrect password");
 
       await scriptService.delete(user.id, true);
-      await musicService.delete(user.id, true);
+      await musicService.delete(false, user.id, true);
       const deleteRes = await userService.deleteUserByEmail(email);
 
       if (deleteRes === 0) throw "unable to delete user";
-      return [200, { message: "user account deleted successfully" }];
+      return { message: "user account deleted successfully" };
     } catch (err) {
       throw err;
     }
