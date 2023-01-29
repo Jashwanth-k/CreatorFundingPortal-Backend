@@ -55,7 +55,7 @@ class ScriptService {
       fetchData = fetchData?.dataValues;
       if (!deleteAll && !fetchData)
         throw this.createError(404, "no script found");
-      if (userId && fetchData.userId !== userId)
+      if (!deleteAll && userId && fetchData.userId !== userId)
         throw this.createError(401, "resource doesn't belongs to the user");
 
       delete fetchData.user.dataValues.password;
@@ -95,7 +95,7 @@ class ScriptService {
         const toDelete = await this.getAll({ userId: userId }, true);
         toDelete.forEach((el) => fileService.delete([el.image, el.text]));
       } else {
-        const toDelete = await this.getOne(id, userId, true);
+        const toDelete = await this.getOne(id, userId, false);
         if (toDelete.userId && toDelete.userId !== userId)
           throw this.createError(401, "resource doesn't belongs to the user");
         fileService.delete([toDelete.image, toDelete.text]);
