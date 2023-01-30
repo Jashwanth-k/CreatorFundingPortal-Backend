@@ -28,6 +28,10 @@ async function validateJwtToken(req, res, next) {
   res.setHeader("content-type", "application/json");
   try {
     const userToken = req.headers.authorization;
+    if (!userToken) {
+      sendResponse(res, 401, { message: "token absent" });
+      return;
+    }
     if (!userToken.startsWith("Bearer")) {
       sendResponse(res, 498, { message: "invalid token" });
       return;
