@@ -1,4 +1,4 @@
-# fly.toml file generated for fundingportal on 2023-01-29T23:52:16+05:30
+# fly.toml file generated for fundingportal on 2023-01-30T12:10:06+05:30
 
 app = "fundingportal"
 kill_signal = "SIGINT"
@@ -6,14 +6,13 @@ kill_timeout = 5
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true
 
 [[services]]
   http_checks = []
-  internal_port = 8080
+  internal_port = 8081
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
