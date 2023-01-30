@@ -38,7 +38,6 @@ class ScriptService {
         delete el.dataValues.user.dataValues.password;
         return el.dataValues;
       });
-      newData.push({ message: "scripts fetched successfully" });
       return newData;
     } catch (err) {
       throw err;

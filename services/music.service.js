@@ -38,7 +38,6 @@ class MusicService {
         delete el.dataValues.user.dataValues.password;
         return el.dataValues;
       });
-      newData.push({ message: "musics fetched successfully" });
       return newData;
     } catch (err) {
       throw err;
