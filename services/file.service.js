@@ -26,9 +26,11 @@ class FileService {
         const ext = path.extname(file.originalname);
         const checkList = [".png", ".jpeg", ".jpg", ".mp3", ".txt", ".docx"];
         if (!checkList.includes(ext)) {
-          callBack(
-            new Error("accepted file formats: .png,.jpeg,.jpg,.mp3,.txt,.docx")
+          const err = new Error(
+            "accepted file formats: .png,.jpeg,.jpg,.mp3,.txt,.docx"
           );
+          err.status = 415;
+          callBack(err);
         } else {
           callBack(null, true);
         }
@@ -40,7 +42,7 @@ class FileService {
     this.upload()(req, res, (err) => {
       if (err) {
         res.setHeader("content-type", "application/json");
-        res.writeHead(500);
+        res.writeHead(err.status || 500);
         res.end(JSON.stringify({ message: err.message }));
         return;
       }
@@ -60,7 +62,3 @@ class FileService {
 
 const fileService = new FileService();
 module.exports = fileService;
-
-// if (file.mimetype.includes("audio")) {
-//   req.body.audio = file.filename;
-// }

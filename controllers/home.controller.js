@@ -1,5 +1,6 @@
 const musicService = require("../services/music.service");
 const scriptService = require("../services/script.service");
+const nftService = require("../services/nft.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -17,11 +18,13 @@ async function getHome(req, res) {
   try {
     const script = await scriptService.getAll(req.query, true);
     const music = await musicService.getAll(req.query, true);
-    if (script.length === 0 && music.length === 0)
+    const nft = await nftService.getAll(req.query, true);
+    if (script.length === 0 && music.length === 0 && nft.length === 0)
       throw createError(404, "no data found");
     const newData = {};
     newData.script = script;
     newData.music = music;
+    newData.nft = nft;
     sendResponse(res, 200, newData);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });
@@ -33,11 +36,13 @@ async function getCreatorUploads(req, res) {
     const query = { userId: req.token?.id };
     const script = await scriptService.getAll(query, true);
     const music = await musicService.getAll(query, true);
-    if (script.length === 0 && music.length === 0)
+    const nft = await nftService.getAll(query, true);
+    if (script.length === 0 && music.length === 0 && nft.length === 0)
       throw createError(404, "no data found");
     const newData = {};
     newData.script = script;
     newData.music = music;
+    newData.nft = nft;
     sendResponse(res, 200, newData);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

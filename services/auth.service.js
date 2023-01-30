@@ -1,9 +1,10 @@
-const userService = require("../services/user.service");
-const roleService = require("../services/role.service");
-const jwtService = require("../services/jwt.service");
+const userService = require("./user.service");
+const roleService = require("./role.service");
+const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
 const scriptService = require("./script.service");
 const musicService = require("./music.service");
+const nftService = require("./nft.service");
 
 class AuthService {
   constructor() {}
@@ -69,6 +70,7 @@ class AuthService {
 
       await scriptService.delete(false, user.id, true);
       await musicService.delete(false, user.id, true);
+      await nftService.delete(false, user.id, true);
       const deleteRes = await userService.deleteUserByEmail(email);
 
       if (deleteRes === 0) throw "unable to delete user";

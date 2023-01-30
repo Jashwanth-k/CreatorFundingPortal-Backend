@@ -1,3 +1,4 @@
+const fileService = require("../services/file.service");
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
   res.end(JSON.stringify(resObj));
@@ -24,14 +25,15 @@ function validateBody(update, validator, req, res, next) {
     let fields;
     if (validator === "music") fields = ["image", "audio", "price", "name"];
     if (validator === "script") fields = ["image", "text", "price", "name"];
+    if (validator === "nft") fields = ["image", "price", "name"];
     let check = update ? true : false;
     for (let key of fields) {
       check = update ? check && !userData[key] : check || !userData[key];
     }
 
     if (check) {
-      sendResponse(res, 400, { message: "incorrect body format" });
       fileService.delete([req.body.image, req.body.audio, req.body.text]);
+      sendResponse(res, 400, { message: "incorrect body format" });
       return;
     }
     next();
