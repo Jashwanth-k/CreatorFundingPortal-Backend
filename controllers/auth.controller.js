@@ -21,6 +21,7 @@ async function login(req, res) {
   try {
     const user = req.body;
     const loginRes = await authService.signIn(user);
+    res.cookie("token", loginRes.token, { httpOnly: true });
     sendResponse(res, 200, loginRes);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });
