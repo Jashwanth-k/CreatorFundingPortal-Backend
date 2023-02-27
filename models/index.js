@@ -20,6 +20,7 @@ db.music = require("../models/music.model")(sequelize, DataTypes);
 db.nft = require("../models/nft.model")(sequelize, DataTypes);
 db.user = require("../models/user.model")(sequelize, DataTypes);
 db.role = require("../models/role.model")(sequelize, DataTypes);
+db.favorite = require("../models/favorites.model")(sequelize, DataTypes);
 
 db.user.hasMany(db.script);
 db.script.belongsTo(db.user);

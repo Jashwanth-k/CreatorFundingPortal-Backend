@@ -5,6 +5,7 @@ const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
 const homeRouter = require("./routes/home.router");
 const nftRouter = require("./routes/nft.route");
+const favoriteRouter = require("./routes/favorite.route");
 
 db.sequelize.sync({ force: true, alter: true }).then(() => init());
 function init() {
@@ -18,6 +19,7 @@ app.use("/music", musicRouter);
 app.use("/auth", authRouter);
 app.use("/home", homeRouter);
 app.use("/nft", nftRouter);
+app.use("/favorites", favoriteRouter);
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(

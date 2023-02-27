@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const scriptService = require("./script.service");
 const musicService = require("./music.service");
 const nftService = require("./nft.service");
+const favoriteService = require("./favorite.service");
 
 class AuthService {
   constructor() {}
@@ -74,6 +75,7 @@ class AuthService {
       const deleteRes = await userService.deleteUserByEmail(email);
 
       if (deleteRes === 0) throw "unable to delete user";
+      await favoriteService.deleteHelper(user.id, false);
       return { message: "user account deleted successfully" };
     } catch (err) {
       throw err;

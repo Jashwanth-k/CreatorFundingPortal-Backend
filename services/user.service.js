@@ -9,6 +9,10 @@ class UserService {
     return this.schema.create(user);
   }
 
+  getUserById(id) {
+    return this.schema.findByPk(id);
+  }
+
   getUserByEmail(email) {
     return this.schema.findOne({
       where: {

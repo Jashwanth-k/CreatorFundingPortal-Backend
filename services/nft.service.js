@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const fileService = require("./file.service");
+const favoriteService = require("../services/favorite.service");
 
 class MusicService {
   constructor() {
@@ -52,7 +53,8 @@ class MusicService {
       });
 
       fetchData = fetchData?.dataValues;
-      if (!deleteAll && !fetchData) throw this.createError(404, "no nft found");
+      if (!deleteAll && !fetchData)
+        throw this.createError(404, "no nft found with given id");
 
       if (!deleteAll && userId && fetchData.userId !== userId)
         throw this.createError(401, "resource doesn't belongs to the user");
@@ -91,12 +93,16 @@ class MusicService {
     try {
       if (deleteAll) {
         const toDelete = await this.getAll({ userId: userId }, true);
-        toDelete.forEach((el) => fileService.delete([el.image]));
+        toDelete.forEach(async (el) => {
+          fileService.delete([el.image]);
+          await favoriteService.deleteHelper(userId, true, "nft", el.id);
+        });
       } else {
         const toDelete = await this.getOne(id, userId, false);
         if (toDelete?.userId !== userId)
           throw this.createError(401, "resource doesn't belongs to the user");
         fileService.delete([toDelete.image]);
+        await favoriteService.deleteHelper(userId, true, "nft", id);
       }
 
       const deleteRes = await this.schema.destroy(
