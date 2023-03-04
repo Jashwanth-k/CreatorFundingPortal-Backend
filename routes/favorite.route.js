@@ -5,7 +5,7 @@ const favoriteController = require("../controllers/favorite.controller");
 const router = express.Router();
 
 router.get(
-  "",
+  "/me",
   [authValidator.validateJwtToken],
   favoriteController.getFavorites
 );

@@ -27,6 +27,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
     },
     { tableName: "musics" }
   );
