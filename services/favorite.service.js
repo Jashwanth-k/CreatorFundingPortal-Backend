@@ -63,7 +63,8 @@ class FavoriteService {
   }
 
   async deleteHelper(userId, deleteOne, type, componentId) {
-    const cond = { userId: userId };
+    const cond = {};
+    if (userId) cond["userId"] = userId;
     if (deleteOne) cond[`${type}Id`] = componentId;
     await this.schema.destroy({
       where: cond,

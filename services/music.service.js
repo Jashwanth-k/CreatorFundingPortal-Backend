@@ -96,14 +96,14 @@ class MusicService {
         const toDelete = await this.getAll({ userId: userId }, true);
         toDelete.forEach(async (el) => {
           fileService.delete([el.image, el.audio]);
-          await favoriteService.deleteHelper(userId, true, "music", el.id);
+          await favoriteService.deleteHelper(false, true, "music", el.id);
         });
       } else {
         const toDelete = await this.getOne(id, userId, false);
         if (toDelete.userId && toDelete.userId !== userId)
           throw this.createError(401, "resource doesn't belongs to the user");
         fileService.delete([toDelete.image, toDelete.audio]);
-        await favoriteService.deleteHelper(userId, true, "music", id);
+        await favoriteService.deleteHelper(false, true, "music", id);
       }
 
       const deleteRes = await this.schema.destroy(

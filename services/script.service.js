@@ -95,14 +95,14 @@ class ScriptService {
         const toDelete = await this.getAll({ userId: userId }, true);
         toDelete.forEach(async (el) => {
           fileService.delete([el.image, el.text]);
-          await favoriteService.deleteHelper(userId, true, "script", el.id);
+          await favoriteService.deleteHelper(false, true, "script", el.id);
         });
       } else {
         const toDelete = await this.getOne(id, userId, false);
         if (toDelete.userId && toDelete.userId !== userId)
           throw this.createError(401, "resource doesn't belongs to the user");
         fileService.delete([toDelete.image, toDelete.text]);
-        await favoriteService.deleteHelper(userId, true, "script", id);
+        await favoriteService.deleteHelper(false, true, "script", id);
       }
 
       const deleteRes = await this.schema.destroy(
