@@ -23,7 +23,9 @@ class FavoriteService {
     try {
       const user = await userService.getUserById(userId);
       if (!user) throw this.createError(404, "no user found with given id");
-      const components = await this.schema.findAll({ userId: userId });
+      const components = await this.schema.findAll({
+        where: { userId: userId },
+      });
       const music = new Set(),
         script = new Set(),
         nft = new Set();

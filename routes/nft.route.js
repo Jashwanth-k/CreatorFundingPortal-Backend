@@ -5,7 +5,11 @@ const authValidator = require("../validators/auth.validator");
 const mainValidator = require("../validators/validator.main");
 const router = express.Router();
 
-router.get("/all", nftController.getAllNfts);
+router.get(
+  "/all",
+  [authValidator.validateJwtForGetReq],
+  nftController.getAllNfts
+);
 router.get("/:id", [mainValidator.validateId], nftController.getNftById);
 router.post(
   "/create",

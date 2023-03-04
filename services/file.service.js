@@ -55,7 +55,7 @@ class FileService {
 
   delete(filenames = []) {
     filenames.forEach((name) => {
-      name && fs.unlinkSync(uploadDir + "/" + name);
+      name && fs.unlink(uploadDir + "/" + name, (err) => {});
     });
   }
 }

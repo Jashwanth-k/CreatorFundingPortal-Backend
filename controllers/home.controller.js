@@ -24,16 +24,16 @@ async function getHome(req, res) {
       throw createError(404, "no data found");
 
     const userId = req.token?.id;
-    let favoriteData = {};
-    favoriteData = await favoriteService.findAll(userId);
+    let favoriteData = { script: new Set(), music: new Set(), nft: new Set() };
+    if (userId) favoriteData = await favoriteService.findAll(userId);
     for (currScript of script) {
-      if (currScript.id in favoriteData["script"]) currScript.isLiked = true;
+      if (favoriteData["script"].has(currScript.id)) currScript.isLiked = true;
     }
     for (currMusic of music) {
-      if (currMusic.id in favoriteData["music"]) currMusic.isLiked = true;
+      if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
     }
-    for (curNft of nft) {
-      if (currNft.id in favoriteData["nft"]) currNft.isLiked = true;
+    for (currNft of nft) {
+      if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
     }
     const newData = {};
     newData.script = script;
@@ -54,15 +54,16 @@ async function getCreatorUploads(req, res) {
     if (script.length === 0 && music.length === 0 && nft.length === 0)
       throw createError(404, "no data found");
 
-    const favoriteData = await favoriteService.findAll(userId);
-    for (currScript in script) {
-      if (currScript.id in favoriteData["script"]) currScript.isLiked = true;
+    const userId = req.token?.id;
+    let favoriteData = await favoriteService.findAll(userId);
+    for (currScript of script) {
+      if (favoriteData["script"].has(currScript.id)) currScript.isLiked = true;
     }
-    for (currMusic in music) {
-      if (currMusic.id in favoriteData["music"]) currMusic.isLiked = true;
+    for (currMusic of music) {
+      if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
     }
-    for (curNft in nft) {
-      if (currNft.id in favoriteData["nft"]) currNft.isLiked = true;
+    for (curNft of nft) {
+      if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
     }
     const newData = {};
     newData.script = script;

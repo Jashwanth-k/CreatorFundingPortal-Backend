@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("", [authValidator.validateJwtForGetReq], homeController.getHome);
 router.get(
   "/uploads/me",
-  [authValidator.validateJwtToken],
+  [authValidator.validateJwtToken, authValidator.validateJwtForGetReq],
   homeController.getCreatorUploads
 );
 

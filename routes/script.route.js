@@ -5,7 +5,11 @@ const mainValidator = require("../validators/validator.main");
 const fileService = require("../services/file.service");
 const router = express.Router();
 
-router.get("/all", scriptController.getAllScripts);
+router.get(
+  "/all",
+  [authValidator.validateJwtForGetReq],
+  scriptController.getAllScripts
+);
 router.get("/:id", [mainValidator.validateId], scriptController.getScriptById);
 router.post(
   "/create",
