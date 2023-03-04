@@ -24,6 +24,35 @@ function validateAuthBody(signIn, req, res, next) {
   }
 }
 
+async function validateJwtForGetReq(req, res, next) {
+  res.setHeader("content-type", "application/json");
+  try {
+    const userToken = req.headers.authorization;
+    const flag = false;
+    if (!userToken) {
+      next();
+      return;
+    }
+    if (!userToken.startsWith("Bearer")) {
+      sendResponse(res, 498, {
+        message: "token should start with Bearer",
+      });
+      return;
+    }
+    const token = await jwtService.validateToken(userToken.slice(7));
+    const user = await userService.getUserByEmail(token.email);
+    if (token.email !== user?.email || token.id !== user?.id) {
+      sendResponse(res, 498, { message: "invalid token" });
+      return;
+    }
+
+    req.token = token;
+    next();
+  } catch (err) {
+    sendResponse(res, 500, { message: err.message });
+  }
+}
+
 async function validateJwtToken(req, res, next) {
   res.setHeader("content-type", "application/json");
   try {
@@ -33,7 +62,9 @@ async function validateJwtToken(req, res, next) {
       return;
     }
     if (!userToken.startsWith("Bearer")) {
-      sendResponse(res, 498, { message: "invalid token" });
+      sendResponse(res, 498, {
+        message: "token should start with Bearer",
+      });
       return;
     }
     const token = await jwtService.validateToken(userToken.slice(7));
@@ -68,4 +99,5 @@ module.exports = {
   validateAuthBody,
   validateJwtToken,
   validateEmail,
+  validateJwtForGetReq,
 };

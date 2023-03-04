@@ -1,5 +1,6 @@
 const scriptService = require("../services/script.service");
 const fileService = require("../services/file.service");
+const favoriteService = require("../services/favorite.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -10,6 +11,11 @@ async function getAllScripts(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const fetchData = await scriptService.getAll(req.query);
+
+    const favoriteData = await favoriteService.findAll(userId);
+    for (currScript in fetchData) {
+      if (currScript.id in favoriteData["script"]) currScript.isLiked = true;
+    }
     sendResponse(res, 200, fetchData);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

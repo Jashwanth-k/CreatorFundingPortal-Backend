@@ -1,5 +1,6 @@
 const fileService = require("../services/file.service");
 const nftService = require("../services/nft.service");
+const favoriteService = require("../services/favorite.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -10,6 +11,11 @@ async function getAllNfts(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const fetchRes = await nftService.getAll(req.query);
+
+    const favoriteData = await favoriteService.findAll(userId);
+    for (currNft in fetchRes) {
+      if (currNft.id in favoriteData["nft"]) currNft.isLiked = true;
+    }
     sendResponse(res, 200, fetchRes);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

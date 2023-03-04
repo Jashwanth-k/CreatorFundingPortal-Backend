@@ -1,5 +1,6 @@
 const fileService = require("../services/file.service");
 const musicService = require("../services/music.service");
+const favoriteService = require("../services/favorite.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -10,6 +11,11 @@ async function getAllMusics(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const fetchRes = await musicService.getAll(req.query);
+
+    const favoriteData = await favoriteService.findAll(userId);
+    for (currMusic in fetchRes) {
+      if (currMusic.id in favoriteData["music"]) currMusic.isLiked = true;
+    }
     sendResponse(res, 200, fetchRes);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

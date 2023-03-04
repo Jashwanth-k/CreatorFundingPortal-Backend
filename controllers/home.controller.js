@@ -1,6 +1,7 @@
 const musicService = require("../services/music.service");
 const scriptService = require("../services/script.service");
 const nftService = require("../services/nft.service");
+const favoriteService = require("../services/favorite.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -21,6 +22,19 @@ async function getHome(req, res) {
     const nft = await nftService.getAll(req.query, true);
     if (script.length === 0 && music.length === 0 && nft.length === 0)
       throw createError(404, "no data found");
+
+    const userId = req.token?.id;
+    let favoriteData = {};
+    favoriteData = await favoriteService.findAll(userId);
+    for (currScript of script) {
+      if (currScript.id in favoriteData["script"]) currScript.isLiked = true;
+    }
+    for (currMusic of music) {
+      if (currMusic.id in favoriteData["music"]) currMusic.isLiked = true;
+    }
+    for (curNft of nft) {
+      if (currNft.id in favoriteData["nft"]) currNft.isLiked = true;
+    }
     const newData = {};
     newData.script = script;
     newData.music = music;
@@ -39,6 +53,17 @@ async function getCreatorUploads(req, res) {
     const nft = await nftService.getAll(query, true);
     if (script.length === 0 && music.length === 0 && nft.length === 0)
       throw createError(404, "no data found");
+
+    const favoriteData = await favoriteService.findAll(userId);
+    for (currScript in script) {
+      if (currScript.id in favoriteData["script"]) currScript.isLiked = true;
+    }
+    for (currMusic in music) {
+      if (currMusic.id in favoriteData["music"]) currMusic.isLiked = true;
+    }
+    for (curNft in nft) {
+      if (currNft.id in favoriteData["nft"]) currNft.isLiked = true;
+    }
     const newData = {};
     newData.script = script;
     newData.music = music;

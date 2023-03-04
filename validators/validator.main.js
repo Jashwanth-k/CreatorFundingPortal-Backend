@@ -55,8 +55,24 @@ function isCreator(req, res, next) {
   }
 }
 
+function validateFavoriteReq(req, res, next) {
+  try {
+    const type = req.query?.type;
+    const userId = req.token?.id;
+    const validTypes = ["script", "music", "nft"];
+    if (!validTypes.includes(type) || userId === undefined) {
+      sendResponse(res, 400, { message: "invalid query format" });
+      return;
+    }
+    next();
+  } catch (err) {
+    sendResponse(res, 500, { message: err.message });
+  }
+}
+
 module.exports = {
   validateId,
   validateBody,
   isCreator,
+  validateFavoriteReq,
 };
