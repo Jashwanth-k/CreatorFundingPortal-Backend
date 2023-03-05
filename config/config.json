@@ -14,10 +14,11 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "freedb_Jashwanth",
-    "password": "WyD#ueK9m7Vv64M",
-    "database": "freedb_fundingPortalDB",
-    "host": "sql.freedb.tech",
-    "dialect": "mysql"
+    "username": "doadmin",
+    "password": "AVNS_9LkwKlNgmrz3uNeaYhz",
+    "database": "defaultdb",
+    "host": "mysqldb-do-user-13037091-0.b.db.ondigitalocean.com",
+    "dialect": "mysql",
+    "port": 25060
   }
 }
