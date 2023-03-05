@@ -7,7 +7,7 @@ const homeRouter = require("./routes/home.router");
 const nftRouter = require("./routes/nft.route");
 const favoriteRouter = require("./routes/favorite.route");
 
-db.sequelize.sync({ force: true, alter: true }).then(() => init());
+db.sequelize.sync({ force: false, alter: true }).then(() => init());
 function init() {
   const rolesData = [{ name: "user" }, { name: "creator" }];
   db.role.bulkCreate(rolesData);
