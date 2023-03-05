@@ -3,13 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-app.use(
-  cors({
-    origin: "https://seal-app-d49k2.ondigitalocean.app/",
-    credentials: true,
-  })
-);
-app.options("*", cors());
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 const path = require("path");
