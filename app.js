@@ -12,6 +12,6 @@ app.use(
 app.use(bodyParser.json());
 app.use(cookieParser());
 const path = require("path");
-const uploadDir = path.join(__dirname + process.env.UPLOAD_DIR);
+const uploadDir = process.env.UPLOAD_DIR;
 
 module.exports = { app, express, uploadDir };

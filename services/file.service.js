@@ -1,10 +1,22 @@
 const multer = require("multer");
-const { uploadDir } = require("../app");
+const { uploadDir, app } = require("../app");
 const path = require("path");
 const fs = require("fs");
 
 class FileService {
-  constructor() {}
+  constructor() {
+    // getting the files
+    app.get("/uploads/:filename", (req, res) => {
+      try {
+        const filename = req.params.filename;
+        const file = fs.readFileSync(process.env.UPLOAD_DIR + filename);
+        res.send(file).status(200);
+      } catch (err) {
+        res.setHeader("content-type", "application/json");
+        res.send(JSON.stringify({ message: "no file found" })).status(404);
+      }
+    });
+  }
 
   upload() {
     return multer({
@@ -55,7 +67,7 @@ class FileService {
 
   delete(filenames = []) {
     filenames.forEach((name) => {
-      name && fs.unlink(uploadDir + "/" + name, (err) => {});
+      name && fs.unlink(uploadDir + name, (err) => {});
     });
   }
 }

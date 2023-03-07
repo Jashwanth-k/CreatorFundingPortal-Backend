@@ -13,7 +13,6 @@ function init() {
   db.role.bulkCreate(rolesData);
 }
 
-app.use(process.env.UPLOAD_DIR, express.static(uploadDir));
 app.use("/script", scriptRouter);
 app.use("/music", musicRouter);
 app.use("/auth", authRouter);
