@@ -6,6 +6,7 @@ const authRouter = require("./routes/auth.route");
 const homeRouter = require("./routes/home.router");
 const nftRouter = require("./routes/nft.route");
 const favoriteRouter = require("./routes/favorite.route");
+const paymentRouter = require("./routes/payment.router");
 
 db.sequelize.sync({ force: false, alter: true }).then(() => init());
 function init() {
@@ -19,6 +20,7 @@ app.use("/auth", authRouter);
 app.use("/home", homeRouter);
 app.use("/nft", nftRouter);
 app.use("/favorites", favoriteRouter);
+app.use("/payments", paymentRouter);
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(
