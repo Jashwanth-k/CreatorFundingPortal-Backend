@@ -11,12 +11,12 @@ async function getAllMusics(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const fetchRes = await musicService.getAll(req.query);
-
-    let favoriteData = { music: new Set() };
     const userId = req.token?.id;
-    if (userId) favoriteData = await favoriteService.findAll(userId);
-    for (currMusic of fetchRes) {
-      if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
+    if (userId) {
+      const favoriteData = await favoriteService.findAll(userId);
+      for (currMusic of fetchRes) {
+        if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
+      }
     }
     sendResponse(res, 200, fetchRes);
   } catch (err) {

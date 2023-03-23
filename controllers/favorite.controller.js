@@ -35,6 +35,14 @@ async function getFavorites(req, res) {
         favorites[type].push(component);
       }
     }
+    if (
+      !favorites.script.length &&
+      !favorites.music.length &&
+      !favorites.nft.length
+    ) {
+      sendResponse(res, 404, { message: "no favorites found" });
+      return;
+    }
     sendResponse(res, 200, favorites);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

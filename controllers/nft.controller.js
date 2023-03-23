@@ -11,12 +11,12 @@ async function getAllNfts(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const fetchRes = await nftService.getAll(req.query);
-
-    let favoriteData = { nft: new Set() };
     const userId = req.token?.id;
-    if (userId) favoriteData = await favoriteService.findAll(userId);
-    for (currNft of fetchRes) {
-      if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+    if (userId) {
+      const favoriteData = await favoriteService.findAll(userId);
+      for (currNft of fetchRes) {
+        if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+      }
     }
     sendResponse(res, 200, fetchRes);
   } catch (err) {

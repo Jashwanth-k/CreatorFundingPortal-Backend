@@ -24,16 +24,18 @@ async function getHome(req, res) {
       throw createError(404, "no data found");
 
     const userId = req.token?.id;
-    let favoriteData = { script: new Set(), music: new Set(), nft: new Set() };
-    if (userId) favoriteData = await favoriteService.findAll(userId);
-    for (currScript of script) {
-      if (favoriteData["script"].has(currScript.id)) currScript.isLiked = true;
-    }
-    for (currMusic of music) {
-      if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
-    }
-    for (currNft of nft) {
-      if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+    if (userId) {
+      const favoriteData = await favoriteService.findAll(userId);
+      for (currScript of script) {
+        if (favoriteData["script"].has(currScript.id))
+          currScript.isLiked = true;
+      }
+      for (currMusic of music) {
+        if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
+      }
+      for (currNft of nft) {
+        if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+      }
     }
     const newData = {};
     newData.script = script;

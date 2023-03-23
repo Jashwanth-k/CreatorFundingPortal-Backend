@@ -11,12 +11,13 @@ async function getAllScripts(req, res) {
   res.setHeader("content-type", "application/json");
   try {
     const fetchData = await scriptService.getAll(req.query);
-
-    let favoriteData = { script: new Set() };
     const userId = req.token?.id;
-    if (userId) favoriteData = await favoriteService.findAll(userId);
-    for (currScript of fetchData) {
-      if (favoriteData["script"].has(currScript.id)) currScript.isLiked = true;
+    if (userId) {
+      const favoriteData = await favoriteService.findAll(userId);
+      for (currScript of fetchData) {
+        if (favoriteData["script"].has(currScript.id))
+          currScript.isLiked = true;
+      }
     }
     sendResponse(res, 200, fetchData);
   } catch (err) {

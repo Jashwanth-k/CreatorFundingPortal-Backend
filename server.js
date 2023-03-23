@@ -22,6 +22,8 @@ app.use("/nft", nftRouter);
 app.use("/favorites", favoriteRouter);
 app.use("/payments", paymentRouter);
 
+app.use("", (req, res) => res.redirect("/home"));
+
 app.listen(process.env.PORT || 8080, () => {
   console.log(
     `app running on ${process.env.NODE_ENV} mode port: ${process.env.PORT}`

@@ -50,6 +50,7 @@ class AuthService {
       const role = await user.getRole();
       const payload = {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: role.name,
       };
