@@ -9,7 +9,10 @@ const favoriteRouter = require("./routes/favorite.route");
 const paymentRouter = require("./routes/payment.router");
 
 db.sequelize.sync({ force: false, alter: true }).then(() => init());
-function init() {
+async function init() {
+  await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 0", { raw: true });
+  await db.role.destroy({ truncate: true });
+  await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 1", { raw: true });
   const rolesData = [{ name: "user" }, { name: "creator" }];
   db.role.bulkCreate(rolesData);
 }

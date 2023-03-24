@@ -2,7 +2,7 @@ const db = require("../models/index");
 const fileService = require("./file.service");
 const favoriteService = require("../services/favorite.service");
 
-class MusicService {
+class NftService {
   constructor() {
     this.schema = db.nft;
   }
@@ -118,5 +118,5 @@ class MusicService {
     }
   }
 }
-const musicService = new MusicService();
-module.exports = musicService;
+const nftService = new NftService();
+module.exports = nftService;
