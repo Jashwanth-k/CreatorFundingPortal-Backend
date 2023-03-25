@@ -1,6 +1,7 @@
 const scriptService = require("../services/script.service");
 const fileService = require("../services/file.service");
 const favoriteService = require("../services/favorite.service");
+const paymentService = require("../services/payment.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -14,9 +15,10 @@ async function getAllScripts(req, res) {
     const userId = req.token?.id;
     if (userId) {
       const favoriteData = await favoriteService.findAll(userId);
+      const paymentsData = await paymentService.findAll(userId);
       for (currScript of fetchData) {
-        if (favoriteData["script"].has(currScript.id))
-          currScript.isLiked = true;
+        if (favoriteData.script.has(currScript.id)) currScript.isLiked = true;
+        if (paymentsData.script.has(currScript.id)) currScript.isPaid = true;
       }
     }
     sendResponse(res, 200, fetchData);
@@ -28,8 +30,15 @@ async function getAllScripts(req, res) {
 async function getScriptById(req, res) {
   res.setHeader("content-type", "application/json");
   try {
+    const userId = req.token?.id;
     const id = parseInt(req.params.id);
     let fetchData = await scriptService.getOne(id);
+    if (userId) {
+      const isFavorite = await favoriteService.findOne(userId, id, "script");
+      const isPurchased = await paymentService.hasOne(userId, id, "script");
+      if (isFavorite) fetchData.isLiked = true;
+      if (isPurchased) fetchData.isPaid = true;
+    }
     sendResponse(res, 200, fetchData);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

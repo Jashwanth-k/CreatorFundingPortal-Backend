@@ -10,7 +10,11 @@ router.get(
   [authValidator.validateJwtForGetReq],
   nftController.getAllNfts
 );
-router.get("/:id", [mainValidator.validateId], nftController.getNftById);
+router.get(
+  "/:id",
+  [mainValidator.validateId, authValidator.validateJwtForGetReq],
+  nftController.getNftById
+);
 router.post(
   "/create",
   [

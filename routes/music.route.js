@@ -10,7 +10,11 @@ router.get(
   [authValidator.validateJwtForGetReq],
   musicController.getAllMusics
 );
-router.get("/:id", [mainValidator.validateId], musicController.getMusicById);
+router.get(
+  "/:id",
+  [mainValidator.validateId, authValidator.validateJwtForGetReq],
+  musicController.getMusicById
+);
 router.post(
   "/create",
   [

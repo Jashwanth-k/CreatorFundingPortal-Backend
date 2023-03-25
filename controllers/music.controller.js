@@ -1,6 +1,7 @@
 const fileService = require("../services/file.service");
 const musicService = require("../services/music.service");
 const favoriteService = require("../services/favorite.service");
+const paymentService = require("../services/payment.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -14,8 +15,10 @@ async function getAllMusics(req, res) {
     const userId = req.token?.id;
     if (userId) {
       const favoriteData = await favoriteService.findAll(userId);
+      const paymentsData = await paymentService.findAll(userId);
       for (currMusic of fetchRes) {
-        if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
+        if (favoriteData.music.has(currMusic.id)) currMusic.isLiked = true;
+        if (paymentsData.music.has(currMusic.id)) currMusic.isPaid = true;
       }
     }
     sendResponse(res, 200, fetchRes);
@@ -27,8 +30,15 @@ async function getAllMusics(req, res) {
 async function getMusicById(req, res) {
   res.setHeader("content-type", "application/json");
   try {
+    const userId = req.token?.id;
     const id = parseInt(req.params.id);
     const fetchRes = await musicService.getOne(id);
+    if (userId) {
+      const isFavorite = await favoriteService.findOne(userId, id, "music");
+      const isPurchased = await paymentService.hasOne(userId, id, "music");
+      if (isFavorite) fetchRes.isLiked = true;
+      if (isPurchased) fetchRes.isPaid = true;
+    }
     sendResponse(res, 200, fetchRes);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

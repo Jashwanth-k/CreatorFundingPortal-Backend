@@ -10,7 +10,11 @@ router.get(
   [authValidator.validateJwtForGetReq],
   scriptController.getAllScripts
 );
-router.get("/:id", [mainValidator.validateId], scriptController.getScriptById);
+router.get(
+  "/:id",
+  [mainValidator.validateId, [authValidator.validateJwtForGetReq]],
+  scriptController.getScriptById
+);
 router.post(
   "/create",
   [

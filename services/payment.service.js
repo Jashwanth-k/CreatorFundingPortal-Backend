@@ -8,7 +8,7 @@ class PaymentService {
     try {
       const user = await userService.getUserById(userId);
       const tableRow = { userId: user.id };
-      tableRow[`${type}Id`] = componentId;
+      tableRow[`${type}Id`] = Number(componentId);
       let data;
       if (type === "script") data = await user.createScriptPayment(tableRow);
       if (type === "music") data = await user.createMusicPayment(tableRow);
@@ -19,13 +19,59 @@ class PaymentService {
     }
   }
 
-  async getAll(userId) {
+  async hasOne(userId, componentId, type) {
+    try {
+      let check;
+      if (type === "script")
+        check = await db.scriptPayment.findOne({
+          where: { userId, scriptId: componentId },
+        });
+      if (type === "music")
+        check = await db.musicPayment.findOne({
+          where: { userId, musicId: componentId },
+        });
+      if (type === "nft")
+        check = await db.nftPayment.findOne({
+          where: { userId, nftId: componentId },
+        });
+      return check;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async findAll(userId, includeAssociation) {
     try {
       const user = await userService.getUserById(userId);
       const totalPayments = {};
-      totalPayments["script"] = await user.getScriptPayments();
-      totalPayments["music"] = await user.getMusicPayments();
-      totalPayments["nft"] = await user.getNftPayments();
+      totalPayments["script"] = await user.getScriptPayments({
+        include: "script",
+      });
+      totalPayments["music"] = await user.getMusicPayments({
+        include: "music",
+      });
+      totalPayments["nft"] = await user.getNftPayments({ include: "nft" });
+
+      const a = totalPayments.script;
+      totalPayments.script.forEach((el, idx) => {
+        totalPayments.script[idx] = includeAssociation
+          ? el.script
+          : el.scriptId;
+        el.script.isPaid = true;
+      });
+      totalPayments.music.forEach((el, idx) => {
+        totalPayments.music[idx] = includeAssociation ? el.music : el.musicId;
+        el.music.isPaid = true;
+      });
+      totalPayments.nft.forEach((el, idx) => {
+        totalPayments.nft[idx] = includeAssociation ? el.nft : el.nftId;
+        el.nft.isPaid = true;
+      });
+      if (!includeAssociation) {
+        totalPayments.script = new Set(totalPayments.script);
+        totalPayments.music = new Set(totalPayments.music);
+        totalPayments.nft = new Set(totalPayments.nft);
+      }
       return totalPayments;
     } catch (err) {
       throw err;

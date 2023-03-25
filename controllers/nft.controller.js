@@ -1,6 +1,7 @@
 const fileService = require("../services/file.service");
 const nftService = require("../services/nft.service");
 const favoriteService = require("../services/favorite.service");
+const paymentService = require("../services/payment.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -14,8 +15,10 @@ async function getAllNfts(req, res) {
     const userId = req.token?.id;
     if (userId) {
       const favoriteData = await favoriteService.findAll(userId);
+      const paymentsData = await paymentService.findAll(userId);
       for (currNft of fetchRes) {
-        if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+        if (favoriteData.nft.has(currNft.id)) currNft.isLiked = true;
+        if (paymentsData.nft.has(currNft.id)) currNft.isPaid = true;
       }
     }
     sendResponse(res, 200, fetchRes);
@@ -27,8 +30,15 @@ async function getAllNfts(req, res) {
 async function getNftById(req, res) {
   res.setHeader("content-type", "application/json");
   try {
+    const userId = req.token?.id;
     const id = parseInt(req.params.id);
     const fetchRes = await nftService.getOne(id);
+    if (userId) {
+      const isFavorite = await favoriteService.findOne(userId, id, "nft");
+      const isPurchased = await paymentService.hasOne(userId, id, "nft");
+      if (isFavorite) fetchRes.isLiked = true;
+      if (isPurchased) fetchRes.isPaid = true;
+    }
     sendResponse(res, 200, fetchRes);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

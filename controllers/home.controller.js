@@ -2,6 +2,7 @@ const musicService = require("../services/music.service");
 const scriptService = require("../services/script.service");
 const nftService = require("../services/nft.service");
 const favoriteService = require("../services/favorite.service");
+const paymentService = require("../services/payment.service");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -26,15 +27,18 @@ async function getHome(req, res) {
     const userId = req.token?.id;
     if (userId) {
       const favoriteData = await favoriteService.findAll(userId);
+      const paymentsData = await paymentService.findAll(userId);
       for (currScript of script) {
-        if (favoriteData["script"].has(currScript.id))
-          currScript.isLiked = true;
+        if (favoriteData.script.has(currScript.id)) currScript.isLiked = true;
+        if (paymentsData.script.has(currScript.id)) currScript.isPaid = true;
       }
       for (currMusic of music) {
-        if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
+        if (favoriteData.music.has(currMusic.id)) currMusic.isLiked = true;
+        if (paymentsData.music.has(currMusic.id)) currMusic.isPaid = true;
       }
       for (currNft of nft) {
-        if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+        if (favoriteData.nft.has(currNft.id)) currNft.isLiked = true;
+        if (paymentsData.nft.has(currNft.id)) currNft.isPaid = true;
       }
     }
     const newData = {};
@@ -57,15 +61,15 @@ async function getCreatorUploads(req, res) {
       throw createError(404, "no data found");
 
     const userId = req.token?.id;
-    let favoriteData = await favoriteService.findAll(userId);
+    const favoriteData = await favoriteService.findAll(userId);
     for (currScript of script) {
-      if (favoriteData["script"].has(currScript.id)) currScript.isLiked = true;
+      if (favoriteData.script.has(currScript.id)) currScript.isLiked = true;
     }
     for (currMusic of music) {
-      if (favoriteData["music"].has(currMusic.id)) currMusic.isLiked = true;
+      if (favoriteData.music.has(currMusic.id)) currMusic.isLiked = true;
     }
-    for (curNft of nft) {
-      if (favoriteData["nft"].has(currNft.id)) currNft.isLiked = true;
+    for (currNft of nft) {
+      if (favoriteData.nft.has(currNft.id)) currNft.isLiked = true;
     }
     const newData = {};
     newData.script = script;
