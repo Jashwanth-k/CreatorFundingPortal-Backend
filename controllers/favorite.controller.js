@@ -2,6 +2,7 @@ const favoriteService = require("../services/favorite.service");
 const musicService = require("../services/music.service");
 const nftService = require("../services/nft.service");
 const scriptService = require("../services/script.service");
+const paymentService = require("../services/payment.service");
 
 function sendResponse(res, status, resObj) {
   res.setHeader("content-type", "application/json");
@@ -31,7 +32,9 @@ async function getFavorites(req, res) {
       const service = getService(type);
       for (let id of getRes[type]) {
         const component = await service.getOne(id);
+        const isPurchased = await paymentService.hasOne(userId, id, type);
         component.isLiked = true;
+        if (isPurchased) component.isPaid = true;
         favorites[type].push(component);
       }
     }

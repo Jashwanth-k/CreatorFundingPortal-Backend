@@ -2,6 +2,7 @@ const paymentService = require("../services/payment.service");
 const musicService = require("../services/music.service");
 const scriptService = require("../services/script.service");
 const nftService = require("../services/nft.service");
+const favoriteService = require("../services/favorite.service");
 const that = {};
 
 function sendResponse(res, status, resObj) {
@@ -36,6 +37,14 @@ that.getPayments = async function (req, res) {
       err.status = 404;
       throw err;
     }
+
+    const favoriteData = await favoriteService.findAll(userId);
+    ["music", "script", "nft"].forEach((type) => {
+      data[type].map((el) => {
+        if (favoriteData[type].has(el.id)) el.isLiked = true;
+        return el;
+      });
+    });
     sendResponse(res, 200, data);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });
