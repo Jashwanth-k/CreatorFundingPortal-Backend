@@ -16,5 +16,4 @@ app.use(function (req, res, next) {
   next();
 });
 
-const path = require("path");
 module.exports = { app, express };

@@ -45,16 +45,21 @@ class FileService {
     this.upload()(req, res, async (err) => {
       try {
         if (err) throw err;
+        if (!req.files) {
+          next();
+          return;
+        }
 
         for (let file of req.files) {
           const type = file.mimetype.split("/")[0];
           req.body[type] = file.filename;
           type === "image" && (await this.compressImage(file.filename));
           type === "audio" && (await this.trimMusicFile(file.filename));
+          type === "text" && (await this.trimTextFile(file.filename));
         }
         next();
       } catch (err) {
-        req.files.forEach((file) => this.delete([file.filename]));
+        req.files?.forEach((file) => this.delete([file.filename]));
         res.setHeader("content-type", "application/json");
         res.writeHead(err.status || 500);
         res.end(JSON.stringify({ message: err.message }));
@@ -99,6 +104,16 @@ class FileService {
         start: 0,
         end: 10,
       });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async trimTextFile(filename) {
+    try {
+      const textFile = fs.readFileSync(uploadDir + filename, "utf8");
+      const newText = textFile.split(/\n/).slice(0, 10).join("");
+      fs.writeFileSync(compressDir + filename, newText);
     } catch (err) {
       throw err;
     }
