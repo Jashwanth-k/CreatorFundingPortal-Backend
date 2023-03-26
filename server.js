@@ -1,5 +1,5 @@
 const db = require("./models/index");
-const { app, express, uploadDir } = require("./app");
+const { app } = require("./app");
 const scriptRouter = require("./routes/script.route");
 const musicRouter = require("./routes/music.route");
 const authRouter = require("./routes/auth.route");
@@ -7,6 +7,7 @@ const homeRouter = require("./routes/home.router");
 const nftRouter = require("./routes/nft.route");
 const favoriteRouter = require("./routes/favorite.route");
 const paymentRouter = require("./routes/payment.router");
+const fileRouter = require("./routes/file.route");
 
 db.sequelize.sync({ force: false, alter: true }).then(() => init());
 async function init() {
@@ -24,6 +25,7 @@ app.use("/home", homeRouter);
 app.use("/nft", nftRouter);
 app.use("/favorites", favoriteRouter);
 app.use("/payments", paymentRouter);
+app.use("/uploads", fileRouter);
 
 app.use("", (req, res) => res.redirect("/home"));
 

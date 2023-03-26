@@ -17,6 +17,4 @@ app.use(function (req, res, next) {
 });
 
 const path = require("path");
-const uploadDir = process.env.UPLOAD_DIR;
-
-module.exports = { app, express, uploadDir };
+module.exports = { app, express };

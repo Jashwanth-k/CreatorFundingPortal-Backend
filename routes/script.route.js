@@ -12,7 +12,7 @@ router.get(
 );
 router.get(
   "/:id",
-  [mainValidator.validateId, [authValidator.validateJwtForGetReq]],
+  [mainValidator.validateId, authValidator.validateJwtForGetReq],
   scriptController.getScriptById
 );
 router.post(
