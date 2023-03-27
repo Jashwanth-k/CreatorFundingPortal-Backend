@@ -14,7 +14,7 @@ async function init() {
   await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 0", { raw: true });
   await db.role.destroy({ truncate: true });
   await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 1", { raw: true });
-  const rolesData = [{ name: "user" }, { name: "creator" }];
+  const rolesData = [{ name: "creator" }];
   db.role.bulkCreate(rolesData);
 }
 

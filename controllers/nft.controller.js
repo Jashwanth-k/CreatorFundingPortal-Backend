@@ -50,6 +50,7 @@ async function createNft(req, res) {
   try {
     const createData = req.body;
     createData.userId = req.token?.id;
+    await fileService.addWaterMark(req.body.image);
     const createRes = await nftService.create(createData);
     sendResponse(res, 201, createRes);
   } catch (err) {
@@ -67,6 +68,7 @@ async function updateNft(req, res) {
     const nft = await nftService.getOne(id, userId);
     if (req.body.image) {
       fileService.delete([nft.image]);
+      await fileService.addWaterMark(req.body.image);
     }
 
     const updateRes = await nftService.update(updateData, id);

@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const mp3cutter = require("mp3-cutter");
-
+const watermark = require("jimp-watermark");
 const uploadDir = process.env.UPLOAD_DIR;
 const compressDir = process.env.COMPRESS_DIR;
 class FileService {
@@ -53,7 +53,7 @@ class FileService {
         for (let file of req.files) {
           const type = file.mimetype.split("/")[0];
           req.body[type] = file.filename;
-          type === "image" && (await this.compressImage(file.filename));
+          type === "image" && (await this.compressImage(file.filename, 90));
           type === "audio" && (await this.trimMusicFile(file.filename));
           type === "text" && (await this.trimTextFile(file.filename));
         }
@@ -85,12 +85,29 @@ class FileService {
     }
   }
 
-  async compressImage(filename) {
+  async addWaterMark(filename) {
+    try {
+      const options = {
+        ratio: 0.4,
+        opacity: 0.6,
+        dstPath: compressDir + filename,
+      };
+      await watermark.addWatermark(compressDir + filename, "logo.png", options);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async compressImage(filename, quality) {
     try {
       const fileBuffer = this.getFileByFilename(filename);
-      return await sharp(fileBuffer)
-        .jpeg({ mozjpeg: true })
+      await sharp(fileBuffer)
+        .jpeg({ mozjpeg: true, quality })
         .toFile(compressDir + filename);
+      if (quality === 30) return;
+      const size = fs.statSync(compressDir + filename).size;
+      if (size > 1e5) this.compressImage(filename, quality - 30);
+      return;
     } catch (err) {
       throw err;
     }

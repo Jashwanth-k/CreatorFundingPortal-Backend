@@ -17,10 +17,6 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    accountId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     isLiked: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
