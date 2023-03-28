@@ -12,7 +12,11 @@ function validateAuthBody(signIn, req, res, next) {
     const user = req.body;
     if (
       (!signIn &&
-        (!user.name || !user.email || !user.password || !user.role)) ||
+        (!user.name ||
+          !user.email ||
+          !user.password ||
+          !user.role ||
+          !user.account)) ||
       (signIn && (!user.email || !user.password))
     ) {
       sendResponse(res, 400, { message: "incorrect body format" });

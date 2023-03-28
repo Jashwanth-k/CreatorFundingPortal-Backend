@@ -53,7 +53,7 @@ class FileService {
         for (let file of req.files) {
           const type = file.mimetype.split("/")[0];
           req.body[type] = file.filename;
-          type === "image" && (await this.compressImage(file.filename, 90));
+          type === "image" && (await this.compressImage(file.filename));
           type === "audio" && (await this.trimMusicFile(file.filename));
           type === "text" && (await this.trimTextFile(file.filename));
         }
@@ -98,7 +98,7 @@ class FileService {
     }
   }
 
-  async compressImage(filename, quality) {
+  async compressImage(filename, quality = 90) {
     try {
       const fileBuffer = this.getFileByFilename(filename);
       await sharp(fileBuffer)

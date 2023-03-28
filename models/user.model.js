@@ -17,5 +17,10 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    account: {
+      type: DataTypes.STRING,
+      uniqueKey: true,
+      allowNull: false,
+    },
   });
 };

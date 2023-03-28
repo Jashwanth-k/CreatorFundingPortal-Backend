@@ -1,21 +1,31 @@
 const fileService = require("../services/file.service");
-const path = require("path");
+const paymentService = require("../services/payment.service");
 
-async function getCompressedFile(filename) {
+async function checkPaidStatus(userId, filename) {
   try {
-    const file = fileService.getFileByFilename(filename, true);
-    return file;
+    if (!userId) return false;
+    const paidComponents = await paymentService.findAll(userId, true);
+    for (let type of Object.values(paidComponents)) {
+      for (let el of type) {
+        if (
+          el.image === filename ||
+          el.text === filename ||
+          el.audio === filename
+        )
+          return true;
+      }
+    }
+    return false;
   } catch (err) {
-    // console.log(err)
-    throw new Error("no file found");
+    throw err;
   }
 }
 
 async function getFile(req, res) {
   try {
     const filename = req.params?.filename;
-    const ext = path.extname(filename);
-    const file = await getCompressedFile(filename);
+    const paidStatus = await checkPaidStatus(req.token?.id, filename);
+    const file = fileService.getFileByFilename(filename, !paidStatus);
     res.send(file).status(200);
   } catch (err) {
     res.setHeader("content-type", "application/json");

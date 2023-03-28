@@ -29,6 +29,7 @@ class AuthService {
         email: userData.email.toLowerCase(),
         password: bcrypt.hashSync(userData.password, 8),
         roleId: rolesRes.id,
+        account: userData.account,
       };
       await userService.create(user);
       return { message: "user created successfully" };
