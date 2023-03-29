@@ -35,6 +35,11 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
+      type: {
+        type: DataTypes.STRING,
+        defaultValue: "music",
+        readOnly: true,
+      },
     },
     { tableName: "musics" }
   );

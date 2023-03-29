@@ -53,7 +53,8 @@ async function getHome(req, res) {
 
 async function getCreatorUploads(req, res) {
   try {
-    const query = { userId: req.token?.id };
+    req.query.userId = req.token?.id;
+    const query = req.query;
     const script = await scriptService.getAll(query, true);
     const music = await musicService.getAll(query, true);
     const nft = await nftService.getAll(query, true);

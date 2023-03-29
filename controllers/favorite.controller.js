@@ -22,6 +22,8 @@ async function getFavorites(req, res) {
   try {
     const userId = req.token?.id;
     const getRes = await favoriteService.findAll(userId);
+    const skip = parseInt(req.query.skip) || 0;
+    const limit = parseInt(req.query.limit) || Number.MAX_SAFE_INTEGER;
 
     const favorites = {
       script: [],
@@ -37,6 +39,10 @@ async function getFavorites(req, res) {
         if (isPurchased) component.isPaid = true;
         favorites[type].push(component);
       }
+    }
+
+    for (type of Object.keys(favorites)) {
+      favorites[type] = favorites[type].slice(skip).slice(0, limit);
     }
     if (
       !favorites.script.length &&

@@ -8,14 +8,20 @@ class MusicService {
   }
 
   #buildFilter(filters) {
-    const component = {};
+    const component = { where: {} };
     if (filters.userId) {
-      component.userId = filters.userId;
+      component.where.userId = filters.userId;
     }
-    component["price"] = {
+    if (filters.include) {
+      component.include = filters.include;
+    }
+    component.where["price"] = {
       [db.Op.lte]: Number(filters["maxPrice"]) || Number.MAX_VALUE,
       [db.Op.gte]: Number(filters["minPrice"]) || Number.MIN_VALUE,
     };
+    component.limit =
+      parseInt(filters.limit) || parseInt(Number.MAX_SAFE_INTEGER);
+    component.offset = parseInt(filters.skip) || 0;
     return component;
   }
 
@@ -27,11 +33,9 @@ class MusicService {
 
   async getAll(filters, deleteAll) {
     try {
+      filters.include = db.user;
       const buildfilters = this.#buildFilter(filters);
-      const fetchData = await this.schema.findAll({
-        where: buildfilters,
-        include: db.user,
-      });
+      const fetchData = await this.schema.findAll(buildfilters);
       if (!deleteAll && fetchData.length === 0)
         throw this.createError(404, "no musics found");
 

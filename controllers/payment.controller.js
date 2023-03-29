@@ -31,7 +31,7 @@ that.addPayment = async function (req, res) {
 that.getPayments = async function (req, res) {
   try {
     const userId = req.token?.id;
-    const data = await paymentService.findAll(userId, true);
+    const data = await paymentService.findAll(userId, true, req.query);
     if (!data.script.length && !data.music.length && !data.nft.length) {
       const err = new Error("no payments found");
       err.status = 404;
