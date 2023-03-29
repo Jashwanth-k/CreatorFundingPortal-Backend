@@ -16,8 +16,8 @@ class MusicService {
       component.include = filters.include;
     }
     component.where["price"] = {
-      [db.Op.lte]: Number(filters["maxPrice"]) || Number.MAX_VALUE,
-      [db.Op.gte]: Number(filters["minPrice"]) || Number.MIN_VALUE,
+      [db.Op.lte]: Number(filters["maxPrice"]) || Number.MAX_SAFE_INTEGER,
+      [db.Op.gte]: Number(filters["minPrice"]) || Number.MIN_SAFE_INTEGER,
     };
     component.limit =
       parseInt(filters.limit) || parseInt(Number.MAX_SAFE_INTEGER);
