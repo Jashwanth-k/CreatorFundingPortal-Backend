@@ -55,11 +55,13 @@ async function getCreatorUploads(req, res) {
   try {
     req.query.userId = req.token?.id;
     const query = req.query;
+    const skip = parseInt(query.skip) || 0;
+    const limit = parseInt(query.limit) || Number.MAX_SAFE_INTEGER;
+    query.skip = 0;
+    query.limit = 0;
     const script = await scriptService.getAll(query, true);
     const music = await musicService.getAll(query, true);
     const nft = await nftService.getAll(query, true);
-    if (script.length === 0 && music.length === 0 && nft.length === 0)
-      throw createError(404, "no data found");
 
     const userId = req.token?.id;
     const favoriteData = await favoriteService.findAll(userId);
@@ -72,10 +74,10 @@ async function getCreatorUploads(req, res) {
     for (currNft of nft) {
       if (favoriteData.nft.has(currNft.id)) currNft.isLiked = true;
     }
-    const newData = {};
-    newData.script = script;
-    newData.music = music;
-    newData.nft = nft;
+    let newData = script.concat(music).concat(nft);
+    newData = newData.slice(skip).slice(0, limit);
+    if (!newData.length) throw createError(404, "no data found");
+
     sendResponse(res, 200, newData);
   } catch (err) {
     sendResponse(res, err.status || 500, { message: err.message });

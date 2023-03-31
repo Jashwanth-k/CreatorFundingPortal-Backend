@@ -25,7 +25,7 @@ async function getFavorites(req, res) {
     const skip = parseInt(req.query.skip) || 0;
     const limit = parseInt(req.query.limit) || Number.MAX_SAFE_INTEGER;
 
-    const favorites = {
+    let favorites = {
       script: [],
       music: [],
       nft: [],
@@ -40,15 +40,12 @@ async function getFavorites(req, res) {
         favorites[type].push(component);
       }
     }
+    favorites = Object.keys(favorites).reduce((acc, type) => {
+      return acc.concat(favorites[type]);
+    }, []);
+    favorites = favorites.slice(skip).slice(0, limit);
 
-    for (type of Object.keys(favorites)) {
-      favorites[type] = favorites[type].slice(skip).slice(0, limit);
-    }
-    if (
-      !favorites.script.length &&
-      !favorites.music.length &&
-      !favorites.nft.length
-    ) {
+    if (!favorites.length) {
       sendResponse(res, 404, { message: "no favorites found" });
       return;
     }

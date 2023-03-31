@@ -46,18 +46,12 @@ class PaymentService {
       const totalPayments = {};
       totalPayments["script"] = await user.getScriptPayments({
         include: "script",
-        limit: parseInt(query.limit) || Number.MAX_SAFE_INTEGER,
-        offset: parseInt(query.skip) || 0,
       });
       totalPayments["music"] = await user.getMusicPayments({
         include: "music",
-        limit: parseInt(query.limit) || Number.MAX_SAFE_INTEGER,
-        offset: parseInt(query.skip) || 0,
       });
       totalPayments["nft"] = await user.getNftPayments({
         include: "nft",
-        limit: parseInt(query.limit) || Number.MAX_SAFE_INTEGER,
-        offset: parseInt(query.skip) || 0,
       });
 
       const a = totalPayments.script;
