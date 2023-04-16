@@ -45,16 +45,39 @@ class PaymentService {
       const user = await userService.getUserById(userId);
       const totalPayments = {};
       totalPayments["script"] = await user.getScriptPayments({
-        include: "script",
+        include: [
+          {
+            model: db.script,
+            include: [
+              { model: db.user, attributes: { exclude: ["password"] } },
+            ],
+          },
+        ],
       });
       totalPayments["music"] = await user.getMusicPayments({
-        include: "music",
+        include: [
+          {
+            model: db.music,
+            include: [
+              { model: db.user, attributes: { exclude: ["password"] } },
+            ],
+          },
+        ],
       });
       totalPayments["nft"] = await user.getNftPayments({
-        include: "nft",
+        include: [
+          {
+            model: db.nft,
+            include: [
+              {
+                model: db.user,
+                attributes: { exclude: ["password"] },
+              },
+            ],
+          },
+        ],
       });
 
-      const a = totalPayments.script;
       totalPayments.script.forEach((el, idx) => {
         totalPayments.script[idx] = includeAssociation
           ? el.script
