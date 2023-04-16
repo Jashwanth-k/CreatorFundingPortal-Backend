@@ -25,5 +25,10 @@ router.delete(
   [authValidator.validateAuthBody.bind(null, true)],
   authController.deleteUser
 );
+router.post(
+  "/verify",
+  [authValidator.validateOtpBody],
+  authController.validateOtp
+);
 
 module.exports = router;

@@ -22,5 +22,9 @@ module.exports = function (sequelize, DataTypes) {
       uniqueKey: true,
       allowNull: false,
     },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   });
 };

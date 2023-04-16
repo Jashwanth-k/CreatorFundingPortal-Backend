@@ -23,6 +23,9 @@ class AuthService {
         userData.email.toLowerCase()
       );
 
+      if (userRes && !userRes.verified) {
+        throw this.createError(400, "please verify your account");
+      }
       if (userRes) throw this.createError(409, "user eamil already exists");
       const user = {
         name: userData.name,
@@ -31,8 +34,9 @@ class AuthService {
         roleId: rolesRes.id,
         account: userData.account,
       };
-      await userService.create(user);
-      return { message: "user created successfully" };
+      const createUserRes = await userService.create(user);
+      userService.deleteUnverifiedUser(createUserRes.id);
+      return createUserRes;
     } catch (err) {
       throw err;
     }

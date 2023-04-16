@@ -28,6 +28,20 @@ class UserService {
       },
     });
   }
+
+  update(id, data) {
+    return this.schema.update(data, { where: { id: id } });
+  }
+
+  markVerified(id) {
+    return this.update(id, { verified: true });
+  }
+
+  deleteUnverifiedUser(id) {
+    setTimeout(() => {
+      return this.schema.destroy({ where: { id: id, verified: false } });
+    }, process.env.USER_EXPIRES_IN_SECONDS * 1000);
+  }
 }
 const userService = new UserService();
 module.exports = userService;

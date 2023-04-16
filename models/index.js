@@ -28,6 +28,7 @@ db.scriptPayment = require("../models/scriptPayment.model")(
   DataTypes
 );
 db.nftPayment = require("../models/nftPayment.model")(sequelize, DataTypes);
+db.otpModel = require("../models/otp.model")(sequelize, DataTypes);
 
 db.user.hasMany(db.script);
 db.script.belongsTo(db.user);
@@ -86,4 +87,9 @@ db.user.hasMany(db.nftPayment);
 db.nftPayment.belongsTo(db.user);
 db.nft.hasMany(db.nftPayment);
 db.nftPayment.belongsTo(db.nft);
+
+db.user.hasOne(db.otpModel, {
+  onDelete: "cascade",
+});
+db.otpModel.belongsTo(db.user);
 module.exports = db;

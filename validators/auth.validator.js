@@ -77,6 +77,10 @@ async function validateJwtToken(req, res, next) {
       sendResponse(res, 498, { message: "invalid token" });
       return;
     }
+    if (!user.verified) {
+      sendResponse(res, 403, { message: "please verify your account" });
+      return;
+    }
 
     req.token = token;
     next();
@@ -99,9 +103,25 @@ function validateEmail(req, res, next) {
   }
 }
 
+function validateOtpBody(req, res, next) {
+  res.setHeader("content-type", "application/json");
+  try {
+    const otp = req.body.otp;
+    const userId = req.body.userId;
+    if (!otp || !userId) {
+      sendResponse(res, 400, { message: "invalid body format" });
+      return;
+    }
+    next();
+  } catch (err) {
+    sendResponse(res, 500, { message: err.message });
+  }
+}
+
 module.exports = {
   validateAuthBody,
   validateJwtToken,
   validateEmail,
   validateJwtForGetReq,
+  validateOtpBody,
 };
