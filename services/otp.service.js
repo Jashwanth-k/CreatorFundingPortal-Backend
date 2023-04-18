@@ -2,11 +2,19 @@ const db = require("../models/index");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const userService = require("./user.service");
 
 class OtpService {
   constructor() {
     this.schema = db.otpModel;
     this.initializeTransporter();
+  }
+
+  createError(status, message) {
+    const err = new Error();
+    err.status = status;
+    err.message = message;
+    return err;
   }
 
   initializeTransporter() {
@@ -37,14 +45,19 @@ class OtpService {
   }
 
   async verifyOtp(userId, otp) {
-    const currOtp = await this.schema.findOne({ where: { userId } });
-    if (!currOtp) {
-      const err = new Error();
-      err.status = 404;
-      err.message = "no user found or already verified";
+    try {
+      const currOtp = await this.schema.findOne({ where: { userId } });
+      const user = await userService.getUserById(userId);
+      if (!currOtp && user) {
+        throw this.createError(200, "user already verified");
+      }
+      if (!currOtp) {
+        throw this.createError(404, "no user found or otp expired");
+      }
+      return bcrypt.compareSync(otp, currOtp.otp);
+    } catch (err) {
       throw err;
     }
-    return bcrypt.compareSync(otp, currOtp.otp);
   }
 
   deleteOtp(userId) {
