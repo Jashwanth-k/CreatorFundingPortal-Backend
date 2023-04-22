@@ -3,9 +3,11 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const nocache = require("nocache");
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
+app.use(nocache());
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
