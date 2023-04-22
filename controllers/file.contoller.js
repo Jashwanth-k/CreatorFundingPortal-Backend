@@ -23,6 +23,7 @@ async function checkPaidStatus(userId, filename) {
 
 async function getFile(req, res) {
   try {
+    res.setHeader("Cache-Control", "no-cache");
     const filename = req.params?.filename;
     const paidStatus = await checkPaidStatus(req.token?.id, filename);
     const file = fileService.getFileByFilename(filename, !paidStatus);
