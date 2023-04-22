@@ -8,6 +8,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 app.use(nocache());
+app.set("etag", false);
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
