@@ -3,9 +3,10 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const mp3cutter = require("mp3-cutter");
-const watermark = require("jimp-watermark");
 const uploadDir = process.env.UPLOAD_DIR;
 const compressDir = process.env.COMPRESS_DIR;
+const sizeOf = require("buffer-image-size");
+
 class FileService {
   constructor() {}
 
@@ -54,8 +55,8 @@ class FileService {
           const type = file.mimetype.split("/")[0];
           req.body[type] = file.filename;
           type === "image" && (await this.compressImage(file.filename));
-          type === "audio" && (await this.trimMusicFile(file.filename));
-          type === "text" && (await this.trimTextFile(file.filename));
+          type === "audio" && this.trimMusicFile(file.filename);
+          type === "text" && this.trimTextFile(file.filename);
         }
         next();
       } catch (err) {
@@ -87,27 +88,29 @@ class FileService {
 
   async addWaterMark(filename) {
     try {
-      const options = {
-        ratio: 0.4,
-        opacity: 0.6,
-        dstPath: compressDir + filename,
-      };
-      await watermark.addWatermark(compressDir + filename, "logo.png", options);
+      const fileBuffer = fs.readFileSync(compressDir + filename);
+
+      const { height, width } = await sharp(fileBuffer).metadata();
+      const logoDimPer = process.env.LOGO_DIMEN_PERCENT;
+      const logoHeight = Math.floor((height * logoDimPer) / 100);
+      const logoWidth = Math.floor((width * logoDimPer) / 100);
+
+      const watermarkBuffer = await sharp(process.env.WATERMARK_LOGO)
+        .resize(logoHeight, logoWidth)
+        .toBuffer();
+      return await sharp(fileBuffer)
+        .composite([{ input: watermarkBuffer, gravity: "northwest" }])
+        .toFile(compressDir + filename);
     } catch (err) {
       throw err;
     }
   }
 
-  async compressImage(filename, quality = 90) {
+  async compressImage(filename) {
     try {
-      const fileBuffer = this.getFileByFilename(filename);
-      await sharp(fileBuffer)
-        .jpeg({ mozjpeg: true, quality })
+      return await sharp(uploadDir + filename)
+        .jpeg({ mozjpeg: true, quality: +process.env.COMPRESS_IMG_QUALITY })
         .toFile(compressDir + filename);
-      if (quality === 30) return;
-      const size = fs.statSync(compressDir + filename).size;
-      if (size > 1e5) this.compressImage(filename, quality - 30);
-      return;
     } catch (err) {
       throw err;
     }
@@ -115,11 +118,11 @@ class FileService {
 
   async trimMusicFile(filename) {
     try {
-      return await mp3cutter.cut({
+      return mp3cutter.cut({
         src: path.join(uploadDir + filename),
         target: path.join(compressDir + filename),
         start: 0,
-        end: 10,
+        end: process.env.MUSIC_COMPRESS_LEN,
       });
     } catch (err) {
       throw err;
@@ -129,7 +132,10 @@ class FileService {
   async trimTextFile(filename) {
     try {
       const textFile = fs.readFileSync(uploadDir + filename, "utf8");
-      const newText = textFile.split(/\n/).slice(0, 10).join("");
+      const newText = textFile
+        .split(/\n/)
+        .slice(0, process.env.TEXT_TRIM_LEN)
+        .join("");
       fs.writeFileSync(compressDir + filename, newText);
     } catch (err) {
       throw err;

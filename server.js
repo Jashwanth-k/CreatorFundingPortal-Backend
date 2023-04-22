@@ -34,3 +34,7 @@ app.listen(process.env.PORT || 8080, () => {
     `app running on ${process.env.NODE_ENV} mode port: ${process.env.PORT}`
   );
 });
+
+process.on("uncaughtException", function (err) {
+  console.log("Caught exception: ", err);
+});

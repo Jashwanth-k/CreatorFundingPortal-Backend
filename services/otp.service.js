@@ -20,7 +20,7 @@ class OtpService {
   initializeTransporter() {
     try {
       this.transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: process.env.MAIL_SERVICE_PROVIDER,
         auth: {
           user: process.env.APP_EMAIL,
           pass: process.env.APP_PASSWORD,
@@ -32,7 +32,7 @@ class OtpService {
   }
 
   generateOtp(len = process.env.OTP_LEN) {
-    return otpGenerator.generate(6, {
+    return otpGenerator.generate(len, {
       upperCaseAlphabets: false,
       specialChars: false,
       lowerCaseAlphabets: false,
