@@ -5,7 +5,6 @@ const sharp = require("sharp");
 const mp3cutter = require("mp3-cutter");
 const uploadDir = process.env.UPLOAD_DIR;
 const compressDir = process.env.COMPRESS_DIR;
-const sizeOf = require("buffer-image-size");
 
 class FileService {
   constructor() {}
@@ -96,7 +95,7 @@ class FileService {
       const logoWidth = Math.floor((width * logoDimPer) / 100);
 
       const watermarkBuffer = await sharp(process.env.WATERMARK_LOGO)
-        .resize(logoHeight, logoWidth)
+        .resize(Math.min(logoHeight, logoWidth))
         .toBuffer();
       return await sharp(fileBuffer)
         .composite([{ input: watermarkBuffer, gravity: "northwest" }])
