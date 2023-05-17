@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    environment {
+        repo_url = "https://github.com/Jashwanth-k/CreatorFundingPortal-Backend"
+        branch = "main"
+        username = "root"
+        ip = "144.126.252.25"
+        directory = "CreatorFundingPortal-Backend/"
+    }
+    tools {
+        nodejs "NodeJs"
+    }
+
+    stages {
+        stage('pull source code') {
+            steps {
+                sshagent(['fundingportalvm']) {
+                    sh "ssh ${username}@${ip} 'rm -rf ${directory} && git clone ${repo_url}'"
+                }
+            }
+        }
+        stage('build') {
+            steps {
+                sshagent(['fundingportalvm']) {
+                    sh "ssh ${username}@${ip} 'cd ${directory} && npm install && npm install -g pm2'"
+                }
+            }
+        }
+        stage('start server') {
+            steps {
+                sshagent(['fundingportalvm']) {
+                    sh "ssh ${username}@${ip} 'cd ${directory} && pm2 kill && pm2 start \"npm run start\"'"
+                }
+            }
+        }
+    }
+}
