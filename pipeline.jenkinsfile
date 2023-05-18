@@ -1,5 +1,4 @@
 properties([pipelineTriggers([githubPush()])])
-
 pipeline {
     triggers {
         githubPush()
