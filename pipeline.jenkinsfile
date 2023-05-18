@@ -1,5 +1,9 @@
+properties([pipelineTriggers([githubPush()])])
 
 pipeline {
+    triggers {
+        githubPush()
+    }
     agent any
     environment {
         repo_url = "https://github.com/Jashwanth-k/CreatorFundingPortal-Backend"
