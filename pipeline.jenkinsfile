@@ -1,4 +1,4 @@
-properties([pipelineTriggers([githubPush()])])
+
 pipeline {
     triggers {
         githubPush()
@@ -16,9 +16,13 @@ pipeline {
     }
 
     stages {
-        stage('pull source code') {
+        stage('checkout SCM') {
             steps {
                 sshagent(['fundingportalvm']) {
+                    checkout scmGit(
+                    branches: [[name: "*/${branch}"]],
+                    userRemoteConfigs: [[url: "${repo_url}"]]
+                    )
                     sh "ssh ${username}@${ip} 'rm -rf ${directory} && git clone ${repo_url}'"
                 }
             }
@@ -36,6 +40,12 @@ pipeline {
                     sh "ssh ${username}@${ip} 'cd ${directory} && pm2 kill && pm2 start \"npm run start\"'"
                 }
             }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs()
         }
     }
 }
