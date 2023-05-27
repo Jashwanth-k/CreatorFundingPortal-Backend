@@ -28,7 +28,7 @@ app.use("/payments", paymentRouter);
 app.use("/uploads", fileRouter);
 
 app.use("", (req, res) => res.redirect("/home"));
-app.listen(process.env.PORT || 8080, () => {
+app.listen(process.env.PORT || 8080, "0.0.0.0", () => {
   console.log(
     `app running on ${process.env.NODE_ENV} mode port: ${process.env.PORT}`
   );
