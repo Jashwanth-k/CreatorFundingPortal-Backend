@@ -48,6 +48,9 @@ class AuthService {
         userData.email.toLowerCase()
       );
       if (!user) throw this.createError(404, "no user found with given email");
+      if (user && !user.verified) {
+        throw this.createError(400, "please verify your account");
+      }
 
       if (!bcrypt.compareSync(userData.password, user.password))
         throw this.createError(401, "incorrect password");
