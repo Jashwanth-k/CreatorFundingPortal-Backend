@@ -14,11 +14,11 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "doadmin",
-    "password": "AVNS_9LkwKlNgmrz3uNeaYhz",
-    "database": "defaultdb",
-    "host": "mysqldb-do-user-13037091-0.b.db.ondigitalocean.com",
+   "username": "node",
+    "password": "1234",
+    "database": "fundingPortal",
+    "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": 25060
+    "port": 3306
   }
 }
