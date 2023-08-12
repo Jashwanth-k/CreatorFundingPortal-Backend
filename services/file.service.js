@@ -86,11 +86,17 @@ class FileService {
     });
   }
 
-  getFileByFilename(filename, isCompressed) {
+  async getFileByFilename(filename, isCompressed, getFileFromS3) {
     try {
-      const file = fs.readFileSync(
-        isCompressed ? compressDir + filename : uploadDir + filename
-      );
+      filename = isCompressed
+        ? path.join(compressDir + filename)
+        : path.join(uploadDir + filename);
+      let file;
+      if (getFileFromS3) {
+        file = await awsService.getFileFromS3(filename);
+      } else {
+        file = fs.readFileSync(filename);
+      }
       return file;
     } catch (err) {
       throw err;

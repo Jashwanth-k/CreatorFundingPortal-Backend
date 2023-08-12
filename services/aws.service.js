@@ -23,7 +23,7 @@ class AwsService {
       const options = {
         Bucket: process.env.S3_BUCKET_NAME,
         Body: fs.createReadStream(fileName),
-        Key: path.join(fileName),
+        Key: fileName,
       };
 
       const uploads = new Upload({
@@ -65,21 +65,6 @@ class AwsService {
       };
 
       const result = await this.s3.send(new DeleteObjectCommand(params));
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async getFileByFileName(filename, isCompressed) {
-    try {
-      const uploadDir = process.env.UPLOAD_DIR;
-      const compressDir = process.env.COMPRESS_DIR;
-
-      const fileName = path.join(
-        isCompressed ? compressDir + filename : uploadDir + filename
-      );
-      const result = await this.getFileFromS3(fileName);
       return result;
     } catch (err) {
       throw err;

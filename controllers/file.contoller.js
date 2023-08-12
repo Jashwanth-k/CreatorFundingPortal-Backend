@@ -26,12 +26,19 @@ async function getFile(req, res) {
   try {
     const filename = req.params?.filename;
     const paidStatus = await checkPaidStatus(req.token?.id, filename);
-    const file = fileService.getFileByFilename(filename, !paidStatus);
-    res.send(file).status(200);
+    const getFileFromS3 = JSON.parse(process.env.GET_FILES_FROM_S3 || "false");
+    const file = await fileService.getFileByFilename(
+      filename,
+      !paidStatus,
+      getFileFromS3
+    );
 
-    // sending files from s3
-    // const file = await awsService.getFileByFileName(filename, false);
-    // file.Body.pipe(res);
+    if (getFileFromS3) {
+      // sending files from s3
+      file.Body.pipe(res);
+      return;
+    }
+    res.send(file).status(200);
   } catch (err) {
     res.setHeader("content-type", "application/json");
     res
