@@ -1,5 +1,6 @@
 const fileService = require("../services/file.service");
 const paymentService = require("../services/payment.service");
+const awsService = require("../services/aws.service");
 
 async function checkPaidStatus(userId, filename) {
   try {
@@ -27,6 +28,10 @@ async function getFile(req, res) {
     const paidStatus = await checkPaidStatus(req.token?.id, filename);
     const file = fileService.getFileByFilename(filename, !paidStatus);
     res.send(file).status(200);
+
+    // sending files from s3
+    // const file = await awsService.getFileByFileName(filename, false);
+    // file.Body.pipe(res);
   } catch (err) {
     res.setHeader("content-type", "application/json");
     res

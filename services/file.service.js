@@ -3,8 +3,10 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const mp3cutter = require("mp3-cutter");
+const awsService = require("./aws.service");
 const uploadDir = process.env.UPLOAD_DIR;
 const compressDir = process.env.COMPRESS_DIR;
+const dirs = [compressDir, uploadDir];
 
 class FileService {
   constructor() {}
@@ -56,6 +58,11 @@ class FileService {
           type === "image" && (await this.compressImage(file.filename));
           type === "audio" && this.trimMusicFile(file.filename);
           type === "text" && this.trimTextFile(file.filename);
+
+          // uploading to s3
+          dirs.forEach((dir) => {
+            awsService.uploadToS3(path.join(dir + file.filename));
+          });
         }
         next();
       } catch (err) {
@@ -69,8 +76,13 @@ class FileService {
 
   delete(filenames = []) {
     filenames.forEach((name) => {
-      name && fs.unlink(uploadDir + name, (err) => {});
-      name && fs.unlink(compressDir + name, (err) => {});
+      dirs.forEach((dir) => {
+        if (!name) return;
+
+        fs.unlink(dir + name, (err) => {});
+        // delete files From s3
+        awsService.deleteFileFromS3(path.join(dir + name));
+      });
     });
   }
 

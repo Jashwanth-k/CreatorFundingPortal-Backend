@@ -12,6 +12,8 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Credentials", true);
+
+  console.log(`\n ----- ${req.url} ----- \n`);
   next();
 });
 
