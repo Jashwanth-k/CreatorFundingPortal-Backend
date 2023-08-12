@@ -2,6 +2,10 @@ const fileService = require("../services/file.service");
 const nftService = require("../services/nft.service");
 const favoriteService = require("../services/favorite.service");
 const paymentService = require("../services/payment.service");
+const awsService = require("../services/aws.service");
+const path = require("path");
+const compressDir = process.env.COMPRESS_DIR;
+const getFilesFromS3 = JSON.parse(process.env.GET_FILES_FROM_S3 || "false");
 
 function sendResponse(res, status, resObj) {
   res.writeHead(status);
@@ -50,8 +54,20 @@ async function createNft(req, res) {
   try {
     const createData = req.body;
     createData.userId = req.token?.id;
+    // watermark
     await fileService.addWaterMark(req.body.image);
+    if (getFilesFromS3) {
+      await awsService.uploadToS3(path.join(compressDir + req.body.image));
+    } else {
+      awsService.uploadToS3(path.join(compressDir + req.body.image));
+    }
+
     const createRes = await nftService.create(createData);
+    paymentService.create(
+      createRes.dataValues?.userId,
+      createRes.dataValues?.id,
+      "nft"
+    );
     sendResponse(res, 201, createRes);
   } catch (err) {
     fileService.delete([req.body.image]);
@@ -68,7 +84,13 @@ async function updateNft(req, res) {
     const nft = await nftService.getOne(id, userId);
     if (req.body.image) {
       fileService.delete([nft.image]);
+      // watermark
       await fileService.addWaterMark(req.body.image);
+      if (getFilesFromS3) {
+        await awsService.uploadToS3(path.join(compressDir + req.body.image));
+      } else {
+        awsService.uploadToS3(path.join(compressDir + req.body.image));
+      }
     }
 
     const updateRes = await nftService.update(updateData, id);

@@ -7,6 +7,7 @@ const awsService = require("./aws.service");
 const uploadDir = process.env.UPLOAD_DIR;
 const compressDir = process.env.COMPRESS_DIR;
 const dirs = [compressDir, uploadDir];
+const getFilesFromS3 = JSON.parse(process.env.GET_FILES_FROM_S3 || "false");
 
 class FileService {
   constructor() {}
@@ -60,9 +61,16 @@ class FileService {
           type === "text" && this.trimTextFile(file.filename);
 
           // uploading to s3
-          dirs.forEach((dir) => {
-            awsService.uploadToS3(path.join(dir + file.filename));
-          });
+          for (let dir of dirs) {
+            if (type === "image" && dir === compressDir) {
+              continue;
+            }
+            if (getFilesFromS3) {
+              await awsService.uploadToS3(path.join(dir + file.filename));
+            } else {
+              awsService.uploadToS3(path.join(dir + file.filename));
+            }
+          }
         }
         next();
       } catch (err) {

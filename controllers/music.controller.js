@@ -51,6 +51,11 @@ async function createMusic(req, res) {
     const createData = req.body;
     createData.userId = req.token?.id;
     const createRes = await musicService.create(createData);
+    paymentService.create(
+      createRes.dataValues?.userId,
+      createRes.dataValues?.id,
+      "music"
+    );
     sendResponse(res, 201, createRes);
   } catch (err) {
     fileService.delete([req.body.image, req.body.audio]);

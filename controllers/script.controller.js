@@ -51,6 +51,11 @@ async function createScript(req, res) {
     const scriptData = req.body;
     scriptData.userId = req.token?.id;
     const createRes = await scriptService.create(scriptData);
+    paymentService.create(
+      createRes.dataValues?.userId,
+      createRes.dataValues?.id,
+      "script"
+    );
     sendResponse(res, 201, createRes);
   } catch (err) {
     fileService.delete([req.body.image, req.body.text]);
