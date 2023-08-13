@@ -7,13 +7,16 @@ class PaymentService {
 
   async getTransactionStatus(txHash) {
     try {
-      let result = await fetch(
+      let resp = await fetch(
         `${process.env.ETHERS_SCAN_API_URL}&txhash=${txHash}&apikey=${process.env.ETHERS_APIKEY}`
       );
-      result = await result.json();
+      resp = await resp.json();
+      if (resp.status == "0") {
+        throw resp.result;
+      }
 
-      const status = result?.result?.isError;
-      const errMessage = result?.result?.errDescription;
+      const status = resp?.result?.isError;
+      const errMessage = resp?.result?.errDescription;
 
       console.log(`\n txHash: ${txHash} --- status: ${status}\n`);
       if (status == 1) throw errMessage;

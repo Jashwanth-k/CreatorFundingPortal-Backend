@@ -14,6 +14,7 @@ db.sequelize
   .then(() => init())
   .catch((err) => console.log(err));
 async function init() {
+  console.log("\n ----connected to DB---- \n");
   await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 0", { raw: true });
   await db.role.destroy({ truncate: true });
   await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 1", { raw: true });

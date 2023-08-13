@@ -19,8 +19,15 @@ that.addPayment = async function (req, res) {
     const userId = req.token?.id;
     const type = req.query.type;
     const componentId = req.params?.id;
-    const tHex = req.body?.tHex;
-    const tStatus = await paymentService.getTransactionStatus(tHex);
+    const txHash = req.body?.tHex;
+    if (!txHash) {
+      sendResponse(res, 400, {
+        message: "txHash is required to validate transaction status",
+      });
+      return;
+    }
+
+    const tStatus = await paymentService.getTransactionStatus(txHash);
     const service = getServiceByType(type);
     await service.getOne(componentId);
     const data = await paymentService.create(userId, componentId, type);
