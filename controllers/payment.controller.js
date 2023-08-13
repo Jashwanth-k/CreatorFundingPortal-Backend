@@ -19,12 +19,14 @@ that.addPayment = async function (req, res) {
     const userId = req.token?.id;
     const type = req.query.type;
     const componentId = req.params?.id;
+    const tHex = req.body?.tHex;
+    const tStatus = await paymentService.getTransactionStatus(tHex);
     const service = getServiceByType(type);
     await service.getOne(componentId);
     const data = await paymentService.create(userId, componentId, type);
     sendResponse(res, 201, data);
   } catch (err) {
-    sendResponse(res, err.status || 500, { message: err.message });
+    sendResponse(res, err.status || 500, { message: err.message || err });
   }
 };
 

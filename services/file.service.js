@@ -56,19 +56,23 @@ class FileService {
         for (let file of req.files) {
           const type = file.mimetype.split("/")[0];
           req.body[type] = file.filename;
-          type === "image" && (await this.compressImage(file.filename));
+          if (type === "image") {
+            await this.compressImage(file.filename);
+            if (req.baseUrl.includes("nft")) {
+              await this.addWaterMark(file.filename);
+            }
+          }
           type === "audio" && this.trimMusicFile(file.filename);
           type === "text" && this.trimTextFile(file.filename);
 
           // uploading to s3
           for (let dir of dirs) {
-            if (type === "image" && dir === compressDir) {
-              continue;
-            }
+            let fileName = path.join(dir + file.filename);
             if (getFilesFromS3) {
-              await awsService.uploadToS3(path.join(dir + file.filename));
+              await awsService.uploadToS3(fileName);
+              this.deleteByFileName(fileName);
             } else {
-              awsService.uploadToS3(path.join(dir + file.filename));
+              awsService.uploadToS3(fileName);
             }
           }
         }
@@ -92,6 +96,10 @@ class FileService {
         awsService.deleteFileFromS3(path.join(dir + name));
       });
     });
+  }
+
+  deleteByFileName(fileName) {
+    fs.unlink(fileName, (err) => {});
   }
 
   async getFileByFilename(filename, isCompressed, getFileFromS3) {

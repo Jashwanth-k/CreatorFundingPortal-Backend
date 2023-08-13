@@ -1,8 +1,27 @@
 const db = require("../models/index");
 const userService = require("../services/user.service");
+const fetch = require("node-fetch");
 
 class PaymentService {
   constructor() {}
+
+  async getTransactionStatus(txHash) {
+    try {
+      let result = await fetch(
+        `${process.env.ETHERS_SCAN_API_URL}&txhash=${txHash}&apikey=${process.env.ETHERS_APIKEY}`
+      );
+      result = await result.json();
+
+      const status = result?.result?.isError;
+      const errMessage = result?.result?.errDescription;
+
+      console.log(`\n txHash: ${txHash} --- status: ${status}\n`);
+      if (status == 1) throw errMessage;
+      if (status == 0) return true;
+    } catch (err) {
+      throw err.message || err;
+    }
+  }
 
   async create(userId, componentId, type) {
     try {
