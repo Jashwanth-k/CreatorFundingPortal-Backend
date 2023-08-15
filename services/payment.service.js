@@ -1,9 +1,6 @@
 const db = require("../models/index");
 const userService = require("../services/user.service");
 const fetch = require("node-fetch");
-const scriptService = require("./script.service");
-const musicService = require("./music.service");
-const nftService = require("./nft.service");
 
 class PaymentService {
   constructor() {}
@@ -120,19 +117,6 @@ class PaymentService {
           ? el.nft.dataValues
           : el.nftId;
         el.nft.isPaid = true;
-      });
-
-      const script = await scriptService.getAll({ userId }, true);
-      const music = await musicService.getAll({ userId }, true);
-      const nft = await nftService.getAll({ userId }, true);
-      const uploads = { script, music, nft };
-
-      ["script", "music", "nft"].forEach((type) => {
-        totalPayments[type] = totalPayments[type].filter((el) => {
-          const id = includeAssociation ? el.id : el;
-          const isPresent = uploads[type].some((childEl) => childEl.id === id);
-          return !isPresent;
-        });
       });
 
       if (!includeAssociation) {

@@ -44,6 +44,19 @@ that.getPayments = async function (req, res) {
     const limit = parseInt(req.query.limit) || Number.MAX_SAFE_INTEGER;
     let data = await paymentService.findAll(userId, true, req.query);
 
+    const script = await scriptService.getAll({ userId }, true);
+    const music = await musicService.getAll({ userId }, true);
+    const nft = await nftService.getAll({ userId }, true);
+    const uploads = { script, music, nft };
+    [("music", "script", "nft")].forEach((type) => {
+      data[type] = data[type].filter((paidEl) => {
+        const isPresent = uploads[type].some(
+          (uploadEl) => uploadEl.id === paidEl.id
+        );
+        return !isPresent;
+      });
+    });
+
     const favoriteData = await favoriteService.findAll(userId);
     ["music", "script", "nft"].forEach((type) => {
       data[type].map((el) => {
