@@ -14,10 +14,10 @@
     "dialect": "mysql"
   },
   "production": {
-   "username": "node",
+    "username": "node",
     "password": "1234",
     "database": "fundingPortal",
-    "host": "127.0.0.1",
+    "host": "144.126.252.25",
     "dialect": "mysql",
     "port": 3306
   }
