@@ -19,6 +19,9 @@
     "database": "fundingPortal",
     "host": "144.126.252.25",
     "dialect": "mysql",
-    "port": 3306
+    "port": 3306,
+    "dialectOptions": {
+      "connectTimeout": 300000
+    }
   }
 }
