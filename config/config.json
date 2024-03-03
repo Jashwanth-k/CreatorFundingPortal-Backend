@@ -17,7 +17,7 @@
     "username": "node",
     "password": "1234",
     "database": "fundingPortal",
-    "host": "144.126.252.25",
+    "host": "127.0.0.1",
     "dialect": "mysql",
     "port": 3306,
     "dialectOptions": {
